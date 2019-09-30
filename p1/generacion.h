@@ -105,7 +105,7 @@ encuentra en la cima de la pila un 0 deja en la cima un 1 y al contrario.
 El último argumento es el valor de etiqueta que corresponde (sin lugar a dudas,
 la implementación del algoritmo requerirá etiquetas). Véase en los ejemplos de
 programa principal como puede gestionarse el número de etiquetas cuantos_no.
-h*/
+*/
 /* FUNCIONES COMPARATIVAS */
 /*
 Todas estas funciones reciben como argumento si los elementos a comparar son o
