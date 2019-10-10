@@ -3,6 +3,7 @@
 
 int main (int argc, char **argv)  {
 	FILE *salida;
+
 	if (argc != 2) {
 		fprintf (stdout, "ERROR POCOS ARGUMENTOS\n");
 		return -1;
@@ -23,15 +24,9 @@ int main (int argc, char **argv)  {
 	/* x=8; */
 	escribir_operando(salida, "8", 0);
 	asignar(salida, "x", 0);
-	
-	escribir_operando(salida, "1", 0);
-	escribir(salida, 0, ENTERO);
 
 	/* scanf(&amp;y); */
 	leer(salida, "y", ENTERO);
-	
-	escribir_operando(salida, "y", 1);
-	escribir(salida, 1, ENTERO);
 
 	/* z = x + y */
 	escribir_operando(salida, "x", 1);

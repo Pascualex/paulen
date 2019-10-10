@@ -3,13 +3,14 @@
 
 int main (int argc,  char **argv) {
     FILE *salida;
-    int cuantos_no = 0;
+
     if (argc != 2) {
-        fprintf (stdout,  "ERROR POCOS ARGUMENTOS\n");
+        fprintf (stdout, "ERROR POCOS ARGUMENTOS\n");
         return -1;
     }
 
     salida = fopen(argv[1], "w");
+    
     escribir_subseccion_data(salida);
     escribir_cabecera_bss(salida);
     declarar_variable(salida,  "x",  ENTERO,  1);
