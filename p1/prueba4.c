@@ -74,7 +74,6 @@ int main (int argc,   char **argv) {
     escribir(salida, 0, BOOLEANO);
 
     escribir_fin(salida);
-
     fclose(salida);
     
     return 0;

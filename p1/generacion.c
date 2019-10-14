@@ -21,6 +21,7 @@ void escribir_subseccion_data(FILE *file) {
 
     fprintf(file, "segment .data\n");
     fprintf(file, "mensaje_division_0 db \"Error: division por cero\", 0\n");
+    fprintf(file, "mensaje_fuera_de_rango db \"Error: indice de vector fuera de rango\", 0\n");
 }
 
 void declarar_variable(FILE *file, char *nombre, int tipo, int tamano) {
@@ -54,7 +55,12 @@ void escribir_fin(FILE *file) {
     fprintf(file, "jmp fin\n");
     fprintf(file, "division_0:\n");
     fprintf(file, "push dword mensaje_division_0\n");
+    fprintf(file, "jmp imprimir_error\n");
+    fprintf(file, "fuera_de_rango:\n");
+    fprintf(file, "push dword mensaje_fuera_de_rango\n");
+    fprintf(file, "imprimir_error:\n");
     fprintf(file, "call print_string\n");
+    fprintf(file, "call print_endofline\n");
     fprintf(file, "fin:\n");
     fprintf(file, "mov dword esp, [__esp]\n");
     fprintf(file, "ret\n");
@@ -298,3 +304,81 @@ void escribir(FILE *file, int es_variable, int tipo) {
     fprintf(file, "add esp, 4\n");
     fprintf(file, "call print_endofline\n");
 }
+
+void ifthen_inicio(FILE *file, int exp_es_variable, int etiqueta) {
+    if (file == NULL) return;
+
+    cargar_registro(file, "eax", exp_es_variable);
+
+    fprintf(file, "cmp eax, %d", FALSE);
+    fprintf(file, "je ifthen_fin_%d\n", etiqueta);
+}
+
+void ifthen_fin(FILE *file, int etiqueta) {
+    if (file == NULL) return;
+
+    fprintf(file, "ifthen_fin_%d:\n", etiqueta);
+}
+
+void ifthenelse_inicio(FILE *file, int exp_es_variable, int etiqueta) {
+    if (file == NULL) return;
+
+    cargar_registro(file, "eax", exp_es_variable);
+
+    fprintf(file, "cmp eax, %d\n", FALSE);
+    fprintf(file, "je ifthenelse_fin_then_%d\n", etiqueta);
+}
+
+void ifthenelse_fin_then(FILE *file, int etiqueta) {
+    if (file == NULL) return;
+
+    fprintf(file, "jmp ifthenelse_fin_%d\n", etiqueta);
+    fprintf(file, "ifthenelse_fin_then_%d:\n", etiqueta);
+}
+
+void ifthenelse_fin(FILE *file, int etiqueta) {
+    if (file == NULL) return;
+
+    fprintf(file, "ifthenelse_fin_%d:\n", etiqueta);
+}
+
+void while_inicio(FILE *file, int etiqueta) {
+    if (file == NULL) return;
+
+    fprintf(file, "while_inicio_%d:\n", etiqueta);
+}
+
+void while_exp_pila (FILE *file, int exp_es_variable, int etiqueta) {
+    if (file == NULL) return;
+
+    cargar_registro(file, "eax", exp_es_variable);
+
+    fprintf(file, "cmp eax, %d\n", FALSE);
+    fprintf(file, "je while_fin_%d\n", etiqueta);
+}
+
+void while_fin(FILE *file, int etiqueta) {
+    if (file == NULL) return;
+
+    fprintf(file, "jmp while_inicio_%d\n", etiqueta);
+    fprintf(file, "while_fin_%d:\n", etiqueta);
+}
+
+void escribir_elemento_vector(FILE *file, char *nombre_vector, int tam_max, int exp_es_variable) {
+    if (file == NULL) return;
+
+    cargar_registro(file, "eax", exp_es_variable);
+
+    fprintf(file, "cmp eax, %d\n", tam_max);
+    fprintf(file, "jge fuera_de_rango\n");
+    fprintf(file, "lea eax, [_%s+4*eax]\n", nombre_vector);
+}
+
+void declararFuncion(FILE *fd_asm, char *nombre_funcion, int num_var_loc) {}
+void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos) {}
+void retornarFuncion(FILE *fd_asm, int es_variable) {}
+void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros) {}
+void escribirVariableLocal(FILE *file, int posicion_variable_local) {}
+void asignarDestinoEnPila(FILE *file, int es_variable) {}
+void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable) {}
+void limpiarPila(FILE *fd_asm, int num_argumentos) {}
