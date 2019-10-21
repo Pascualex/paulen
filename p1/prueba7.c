@@ -41,6 +41,8 @@ int main (int argc, char **argv) {
     
     //Retornamos de la funcion con lo que esta encima de la pila.
     retornarFuncion(fd_asm, 0);
+
+    //Inicio main
     escribir_inicio_main(fd_asm);
 
     //z=2
@@ -51,7 +53,7 @@ int main (int argc, char **argv) {
     //printf doble(z)
     //Llamamos a la funcion que tiene 1 argumento. Estamos dando un salto a la etiqueta. Primero apilamos el parametro.
     operandoEnPilaAArgumento(fd_asm, 1);
-    llamarFuncion(fd_asm, "_doble", 1);
+    llamarFuncion(fd_asm, "doble", 1);
 
     //Imprimimos el resultado de la funcion.
     escribir(fd_asm, 0, ENTERO);

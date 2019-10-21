@@ -374,11 +374,70 @@ void escribir_elemento_vector(FILE *file, char *nombre_vector, int tam_max, int 
     fprintf(file, "lea eax, [_%s+4*eax]\n", nombre_vector);
 }
 
-void declararFuncion(FILE *fd_asm, char *nombre_funcion, int num_var_loc) {}
-void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos) {}
-void retornarFuncion(FILE *fd_asm, int es_variable) {}
-void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros) {}
-void escribirVariableLocal(FILE *file, int posicion_variable_local) {}
-void asignarDestinoEnPila(FILE *file, int es_variable) {}
-void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable) {}
-void limpiarPila(FILE *fd_asm, int num_argumentos) {}
+void declararFuncion(FILE *file, char *nombre_funcion, int num_var_loc) {
+    if (file == NULL) return;
+
+    fprintf(file, "_%s:\n", nombre_funcion);
+    fprintf(file, "push dword ebp\n");
+    fprintf(file, "mov ebp, esp\n");
+    fprintf(file, "sub esp, %d\n", num_var_loc*4);
+}
+
+void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros) {
+    if (file == NULL) return;
+
+    fprintf(file, "mov eax, ebp\n");
+    fprintf(file, "add eax, %d\n", (num_total_parametros-pos_parametro+1)*4);
+    fprintf(file, "push dword eax\n");
+}
+
+void escribirVariableLocal(FILE *file, int posicion_variable_local) {
+    if (file == NULL) return;
+
+    fprintf(file, "mov eax, ebp\n");
+    fprintf(file, "sub eax, %d\n", posicion_variable_local*4);
+    fprintf(file, "push dword eax\n");
+}
+
+void asignarDestinoEnPila(FILE *file, int es_variable) {
+    if (file == NULL) return;
+
+    cargar_registro(file, "eax", FALSE);
+    cargar_registro(file, "ebx", es_variable);
+
+    fprintf(file, "mov [eax], ebx\n");
+}
+
+void retornarFuncion(FILE *file, int es_variable) {
+    if (file == NULL) return;
+
+    cargar_registro(file, "eax", es_variable);
+
+    fprintf(file, "mov esp, ebp\n");
+    fprintf(file, "pop dword ebp\n");
+    fprintf(file, "ret\n");
+}
+
+void operandoEnPilaAArgumento(FILE *file, int es_variable) {
+    if (file == NULL) return;
+
+    if (es_variable) {
+        fprintf(file, "pop dword eax\n");
+        fprintf(file, "mov dword eax, [eax]\n");
+        fprintf(file, "push dword eax\n");
+    }
+}
+
+void llamarFuncion(FILE *file, char *nombre_funcion, int num_argumentos) {
+    if (file == NULL) return;
+
+    fprintf(file, "call _%s\n", nombre_funcion);
+    limpiarPila(file, num_argumentos);
+    fprintf(file, "push eax\n");
+}
+
+void limpiarPila(FILE *file, int num_argumentos) {
+    if (file == NULL) return;
+
+    fprintf(file, "add esp, %d\n", num_argumentos*4);
+}

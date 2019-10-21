@@ -51,13 +51,13 @@ void while_fin(FILE *file, int etiqueta);
 
 void escribir_elemento_vector(FILE *file, char *nombre_vector, int tam_max, int exp_es_variable);
 
-void declararFuncion(FILE *fd_asm, char *nombre_funcion, int num_var_loc);
-void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos);
-void retornarFuncion(FILE *fd_asm, int es_variable);
+void declararFuncion(FILE *file, char *nombre_funcion, int num_var_loc);
 void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros);
 void escribirVariableLocal(FILE *file, int posicion_variable_local);
 void asignarDestinoEnPila(FILE *file, int es_variable);
-void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable);
-void limpiarPila(FILE *fd_asm, int num_argumentos);
+void retornarFuncion(FILE *file, int es_variable);
+void operandoEnPilaAArgumento(FILE *file, int es_variable);
+void llamarFuncion(FILE *file, char *nombre_funcion, int num_argumentos);
+void limpiarPila(FILE *file, int num_argumentos);
 
 #endif
