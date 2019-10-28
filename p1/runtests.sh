@@ -5,6 +5,7 @@
 ./compile.sh prueba5
 ./compile.sh prueba6
 ./compile.sh prueba7
+./compile.sh prueba8
 
 echo ===========================================
 echo PRUEBA 1
@@ -66,4 +67,10 @@ echo Entrada: Ninguna
 echo Salida: 4
 echo -------------------------------------------
 echo "" | ./prueba7
+echo ===========================================
+echo PRUEBA 8
+echo Entrada: Ninguna
+echo Salida: 11
+echo -------------------------------------------
+echo "" | ./prueba8
 echo ===========================================

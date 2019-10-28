@@ -9,6 +9,28 @@ void cargar_registro(FILE *file, char *reg, int es_variable) {
     }
 }
 
+void leer_registro_de_pila(FILE *file, char *reg, int es_variable, int offset) {
+    fprintf(file, "mov dword %s, [esp+%d]\n", reg, offset*4);
+
+    if (es_variable) {
+        fprintf(file, "mov dword %s, [%s]\n", reg, reg);
+    }
+}
+
+void escribir_registro_en_pila(FILE *file, char *reg, int es_variable, int offset) {
+    if (es_variable) {
+        fprintf(file, "push dword eax\n");
+        fprintf(file, "push dword ecx\n");
+        fprintf(file, "mov dword eax, %s\n", reg);
+        fprintf(file, "mov dword ecx, [esp+%d]\n", (offset+2)*4);
+        fprintf(file, "mov dword [ecx], eax\n");
+        fprintf(file, "pop dword ecx\n");
+        fprintf(file, "pop dword eax\n");
+    } else {
+        fprintf(file, "mov dword [esp+%d], %s\n", offset*4, reg);
+    }
+}
+
 void escribir_cabecera_bss(FILE *file) {
     if (file == NULL) return;
 
@@ -364,6 +386,53 @@ void while_fin(FILE *file, int etiqueta) {
     fprintf(file, "while_fin_%d:\n", etiqueta);
 }
 
+void escribir_codigo_for(FILE *file, int es_variable_1, int es_variable_2, int es_variable_3, char *bloque_codigo, int etiqueta) {
+    if (file == NULL) return;
+
+    leer_registro_de_pila(file, "ebx", es_variable_1, 2); // Excepcional uso de ebx
+    leer_registro_de_pila(file, "edx", es_variable_3, 0);
+
+    fprintf(file, "cmp edx, %d\n", FALSE);
+    fprintf(file, "je for_inicio_descendente_%d\n", etiqueta);
+
+    fprintf(file, "dec ebx\n");
+    fprintf(file, "push dword ebx\n");
+    fprintf(file, "jmp for_inicio_%d\n", etiqueta);
+
+    fprintf(file, "for_inicio_descendente_%d:\n", etiqueta);
+    fprintf(file, "inc ebx\n");
+    fprintf(file, "push dword ebx\n");
+
+    fprintf(file, "for_inicio_%d:\n", etiqueta);
+
+    leer_registro_de_pila(file, "ebx", FALSE, 0); // Excepcional uso de ebx
+    leer_registro_de_pila(file, "ecx", es_variable_2, 2);
+    leer_registro_de_pila(file, "edx", es_variable_3, 1);
+
+    fprintf(file, "cmp edx, %d\n", FALSE);
+    fprintf(file, "je for_descendente_%d\n", etiqueta);
+
+    fprintf(file, "inc ebx\n");
+    fprintf(file, "cmp ebx, ecx\n");
+    fprintf(file, "jle for_bloque_codigo_%d\n", etiqueta);
+    fprintf(file, "jmp for_fin_%d\n", etiqueta);
+
+    fprintf(file, "for_descendente_%d:\n", etiqueta);
+    fprintf(file, "dec ebx\n");
+    fprintf(file, "cmp ebx, ecx\n");
+    fprintf(file, "jge for_bloque_codigo_%d\n", etiqueta);
+    fprintf(file, "jmp for_fin_%d\n", etiqueta);
+
+    fprintf(file, "for_bloque_codigo_%d:\n", etiqueta);
+    escribir_registro_en_pila(file, "ebx", FALSE, 0);
+    fprintf(file, "%s", bloque_codigo);
+
+    fprintf(file, "jmp for_inicio_%d\n", etiqueta);
+    fprintf(file, "for_fin_%d:\n", etiqueta);
+    fprintf(file, "add esp, 4*4\n");
+}
+
+
 void escribir_elemento_vector(FILE *file, char *nombre_vector, int tam_max, int exp_es_variable) {
     if (file == NULL) return;
 
@@ -379,14 +448,14 @@ void declararFuncion(FILE *file, char *nombre_funcion, int num_var_loc) {
 
     fprintf(file, "_%s:\n", nombre_funcion);
     fprintf(file, "push dword ebp\n");
-    fprintf(file, "mov ebp, esp\n");
+    fprintf(file, "mov dword ebp, esp\n");
     fprintf(file, "sub esp, %d\n", num_var_loc*4);
 }
 
 void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros) {
     if (file == NULL) return;
 
-    fprintf(file, "mov eax, ebp\n");
+    fprintf(file, "mov dword eax, ebp\n");
     fprintf(file, "add eax, %d\n", (num_total_parametros-pos_parametro+1)*4);
     fprintf(file, "push dword eax\n");
 }
@@ -394,7 +463,7 @@ void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros) 
 void escribirVariableLocal(FILE *file, int posicion_variable_local) {
     if (file == NULL) return;
 
-    fprintf(file, "mov eax, ebp\n");
+    fprintf(file, "mov dword eax, ebp\n");
     fprintf(file, "sub eax, %d\n", posicion_variable_local*4);
     fprintf(file, "push dword eax\n");
 }
@@ -403,9 +472,9 @@ void asignarDestinoEnPila(FILE *file, int es_variable) {
     if (file == NULL) return;
 
     cargar_registro(file, "eax", FALSE);
-    cargar_registro(file, "ebx", es_variable);
+    cargar_registro(file, "ecx", es_variable);
 
-    fprintf(file, "mov [eax], ebx\n");
+    fprintf(file, "mov dword [eax], ecx\n");
 }
 
 void retornarFuncion(FILE *file, int es_variable) {
@@ -413,7 +482,7 @@ void retornarFuncion(FILE *file, int es_variable) {
 
     cargar_registro(file, "eax", es_variable);
 
-    fprintf(file, "mov esp, ebp\n");
+    fprintf(file, "mov dword esp, ebp\n");
     fprintf(file, "pop dword ebp\n");
     fprintf(file, "ret\n");
 }

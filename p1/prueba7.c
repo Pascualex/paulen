@@ -3,11 +3,7 @@
 #include <string.h>
 #include "generacion.h"
 
-int main (int argc, char **argv) {    
-    int etiqueta = 0;
-    int getiqueta = 0;
-    int etiquetas[MAX_ETIQUETAS];
-    int cima_etiquetas = -1;
+int main (int argc, char **argv) {
     FILE *fd_asm;
 
     if (argc != 2) {
@@ -22,6 +18,7 @@ int main (int argc, char **argv) {
 
     //int z;
     declarar_variable(fd_asm, "z", 1, 1);
+    
     escribir_segmento_codigo(fd_asm);
 
     //Declaramos la funcion. Vamos a imprimir su etiqueta y decir que tiene una variable local.
