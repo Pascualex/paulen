@@ -8,7 +8,6 @@ int i,total;
 // ERROR: CARACTER NO PERMITIDO
 int &;
 
-
 // Leer x e y:
 scanf x;
 scanf y;
