@@ -506,25 +506,19 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "pruebaMorfo.l"
-#line 2 "pruebaMorfo.l"
-#include "tokens.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#line 1 "alfa.l"
+#line 2 "alfa.l"
+    #include "y.tab.h"
+    #include <stdlib.h>
+    #include <stdio.h>
+    #include <stdarg.h>
 
-int row = 1;
-int col = 1;
+    int row = 1;
+    int col = 1;
 
-void print_and_update(char *format, ...) {
-    va_list args;
-    va_start(args, format);
-    vfprintf(yyout, format, args);
-    va_end(args);
-    col += yyleng;
-}
-#line 527 "lex.yy.c"
-#line 528 "lex.yy.c"
+    void print_and_update(char *format, ...);
+#line 521 "lex.yy.c"
+#line 522 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -741,11 +735,11 @@ YY_DECL
 		}
 
 	{
-#line 24 "pruebaMorfo.l"
+#line 18 "alfa.l"
 
-#line 26 "pruebaMorfo.l"
+#line 20 "alfa.l"
     /* Palabras reservadas */
-#line 749 "lex.yy.c"
+#line 743 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -804,225 +798,219 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 27 "pruebaMorfo.l"
-{ print_and_update("TOK_MAIN %d main\n", TOK_MAIN); }
+#line 21 "alfa.l"
+{ col += yyleng; return TOK_MAIN; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 28 "pruebaMorfo.l"
-{ print_and_update("TOK_INT %d int\n", TOK_INT); }
+#line 22 "alfa.l"
+{ col += yyleng; return TOK_INT; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 29 "pruebaMorfo.l"
-{ print_and_update("TOK_BOOLEAN %d bool\n", TOK_BOOLEAN); }
+#line 23 "alfa.l"
+{ col += yyleng; return TOK_BOOLEAN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 30 "pruebaMorfo.l"
-{ print_and_update("TOK_ARRAY %d array\n", TOK_ARRAY); }
+#line 24 "alfa.l"
+{ col += yyleng; return TOK_ARRAY; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 31 "pruebaMorfo.l"
-{ print_and_update("TOK_FUNCTION %d function\n", TOK_FUNCTION); }
+#line 25 "alfa.l"
+{ col += yyleng; return TOK_FUNCTION; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 32 "pruebaMorfo.l"
-{ print_and_update("TOK_IF %d if\n", TOK_IF); }
+#line 26 "alfa.l"
+{ col += yyleng; return TOK_IF; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 33 "pruebaMorfo.l"
-{ print_and_update("TOK_ELSE %d else\n", TOK_ELSE); }
+#line 27 "alfa.l"
+{ col += yyleng; return TOK_ELSE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 34 "pruebaMorfo.l"
-{ print_and_update("TOK_WHILE %d while\n", TOK_WHILE); }
+#line 28 "alfa.l"
+{ col += yyleng; return TOK_WHILE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 35 "pruebaMorfo.l"
-{ print_and_update("TOK_SCANF %d scanf\n", TOK_SCANF); }
+#line 29 "alfa.l"
+{ col += yyleng; return TOK_SCANF; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 36 "pruebaMorfo.l"
-{ print_and_update("TOK_PRINTF %d printf\n", TOK_PRINTF); }
+#line 30 "alfa.l"
+{ col += yyleng; return TOK_PRINTF; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 37 "pruebaMorfo.l"
-{ print_and_update("TOK_RETURN %d return\n", TOK_RETURN); }
+#line 31 "alfa.l"
+{ col += yyleng; return TOK_RETURN; }
 	YY_BREAK
 /* Símbolos */
 case 12:
 YY_RULE_SETUP
-#line 40 "pruebaMorfo.l"
-{ print_and_update("TOK_PUNTOYCOMA %d ;\n", TOK_PUNTOYCOMA); }
+#line 34 "alfa.l"
+{ col += yyleng; return TOK_PUNTOYCOMA; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 41 "pruebaMorfo.l"
-{ print_and_update("TOK_COMA %d ,\n", TOK_COMA); }
+#line 35 "alfa.l"
+{ col += yyleng; return TOK_COMA; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 42 "pruebaMorfo.l"
-{ print_and_update("TOK_PARENTESISIZQUIERDO %d (\n", TOK_PARENTESISIZQUIERDO); }
+#line 36 "alfa.l"
+{ col += yyleng; return TOK_PARENTESISIZQUIERDO; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 43 "pruebaMorfo.l"
-{ print_and_update("TOK_PARENTESISDERECHO %d )\n", TOK_PARENTESISDERECHO); }
+#line 37 "alfa.l"
+{ col += yyleng; return TOK_PARENTESISDERECHO; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 44 "pruebaMorfo.l"
-{ print_and_update("TOK_CORCHETEIZQUIERDO %d [\n", TOK_CORCHETEIZQUIERDO); }
+#line 38 "alfa.l"
+{ col += yyleng; return TOK_CORCHETEIZQUIERDO; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 45 "pruebaMorfo.l"
-{ print_and_update("TOK_CORCHETEDERECHO %d ]\n", TOK_CORCHETEDERECHO); }
+#line 39 "alfa.l"
+{ col += yyleng; return TOK_CORCHETEDERECHO; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 46 "pruebaMorfo.l"
-{ print_and_update("TOK_LLAVEIZQUIERDA %d {\n", TOK_LLAVEIZQUIERDA); }
+#line 40 "alfa.l"
+{ col += yyleng; return TOK_LLAVEIZQUIERDA; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 47 "pruebaMorfo.l"
-{ print_and_update("TOK_LLAVEDERECHA %d }\n", TOK_LLAVEDERECHA); }
+#line 41 "alfa.l"
+{ col += yyleng; return TOK_LLAVEDERECHA; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 48 "pruebaMorfo.l"
-{ print_and_update("TOK_ASIGNACION %d =\n", TOK_ASIGNACION); }
+#line 42 "alfa.l"
+{ col += yyleng; return TOK_ASIGNACION; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 49 "pruebaMorfo.l"
-{ print_and_update("TOK_MAS %d +\n", TOK_MAS); }
+#line 43 "alfa.l"
+{ col += yyleng; return TOK_MAS; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 50 "pruebaMorfo.l"
-{ print_and_update("TOK_MENOS %d -\n", TOK_MENOS); }
+#line 44 "alfa.l"
+{ col += yyleng; return TOK_MENOS; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 51 "pruebaMorfo.l"
-{ print_and_update("TOK_DIVISION %d /\n", TOK_DIVISION); }
+#line 45 "alfa.l"
+{ col += yyleng; return TOK_DIVISION; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 52 "pruebaMorfo.l"
-{ print_and_update("TOK_ASTERISCO %d *\n", TOK_ASTERISCO); }
+#line 46 "alfa.l"
+{ col += yyleng; return TOK_ASTERISCO; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 53 "pruebaMorfo.l"
-{ print_and_update("TOK_AND %d and\n", TOK_AND); }
+#line 47 "alfa.l"
+{ col += yyleng; return TOK_AND; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 54 "pruebaMorfo.l"
-{ print_and_update("TOK_OR %d or\n", TOK_OR); }
+#line 48 "alfa.l"
+{ col += yyleng; return TOK_OR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 55 "pruebaMorfo.l"
-{ print_and_update("TOK_NOT %d not\n", TOK_NOT); }
+#line 49 "alfa.l"
+{ col += yyleng; return TOK_NOT; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 56 "pruebaMorfo.l"
-{ print_and_update("TOK_IGUAL %d ==\n", TOK_IGUAL); }
+#line 50 "alfa.l"
+{ col += yyleng; return TOK_IGUAL; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 57 "pruebaMorfo.l"
-{ print_and_update("TOK_DISTINTO %d !=\n", TOK_DISTINTO); }
+#line 51 "alfa.l"
+{ col += yyleng; return TOK_DISTINTO; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 58 "pruebaMorfo.l"
-{ print_and_update("TOK_MENORIGUAL %d <=\n", TOK_MENORIGUAL); }
+#line 52 "alfa.l"
+{ col += yyleng; return TOK_MENORIGUAL; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 59 "pruebaMorfo.l"
-{ print_and_update("TOK_MAYORIGUAL %d >=\n", TOK_MAYORIGUAL); }
+#line 53 "alfa.l"
+{ col += yyleng; return TOK_MAYORIGUAL; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 60 "pruebaMorfo.l"
-{ print_and_update("TOK_MENOR %d <\n", TOK_MENOR); }
+#line 54 "alfa.l"
+{ col += yyleng; return TOK_MENOR; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 61 "pruebaMorfo.l"
-{ print_and_update("TOK_MAYOR %d >\n", TOK_MAYOR); }
+#line 55 "alfa.l"
+{ col += yyleng; return TOK_MAYOR; }
 	YY_BREAK
 /* Constantes */ 
 case 34:
 YY_RULE_SETUP
-#line 64 "pruebaMorfo.l"
-{ print_and_update("TOK_CONSTANTE_ENTERA %d %s\n", TOK_CONSTANTE_ENTERA, yytext); }
+#line 58 "alfa.l"
+{ col += yyleng; return TOK_CONSTANTE_ENTERA; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 65 "pruebaMorfo.l"
-{ print_and_update("TOK_TRUE %d true\n", TOK_TRUE); }
+#line 59 "alfa.l"
+{ col += yyleng; return TOK_TRUE; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 66 "pruebaMorfo.l"
-{ print_and_update("TOK_FALSE %d false\n", TOK_FALSE); }
+#line 60 "alfa.l"
+{ col += yyleng; return TOK_FALSE; }
 	YY_BREAK
 /* Identificadores */
 case 37:
 YY_RULE_SETUP
-#line 69 "pruebaMorfo.l"
-{
-    if (yyleng > 50) {
-        fprintf(stderr, "Error en [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
-        return -1;
-    }
-    print_and_update("TOK_IDENTIFICADOR %d %s\n", TOK_IDENTIFICADOR, yytext);
-}
+#line 63 "alfa.l"
+{ col += yyleng; return TOK_IDENTIFICADOR; }
 	YY_BREAK
 /* Separadores */
 case 38:
 YY_RULE_SETUP
-#line 78 "pruebaMorfo.l"
+#line 66 "alfa.l"
 { col += yyleng; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 79 "pruebaMorfo.l"
+#line 67 "alfa.l"
 { col += 4-yyleng%4; }
 	YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 80 "pruebaMorfo.l"
+#line 68 "alfa.l"
 { row++; col = 1; }
 	YY_BREAK
 /* Comentarios */
 case 41:
 YY_RULE_SETUP
-#line 83 "pruebaMorfo.l"
+#line 71 "alfa.l"
 { }
 	YY_BREAK
 /* Errores */
 case 42:
 YY_RULE_SETUP
-#line 86 "pruebaMorfo.l"
+#line 74 "alfa.l"
 {
     fprintf(stderr, "Error en [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);
     return -1;
@@ -1030,10 +1018,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 91 "pruebaMorfo.l"
+#line 79 "alfa.l"
 ECHO;
 	YY_BREAK
-#line 1037 "lex.yy.c"
+#line 1025 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2038,32 +2026,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 91 "pruebaMorfo.l"
+#line 79 "alfa.l"
 
-
-int main(int argc, char **argv) {
-    int status;
-
-    if (argc != 3) {
-        printf("Número incorrecto de argumentos.");
-        return -1;
-    }
-
-    yyin = fopen(argv[1], "r");
-    if (yyin == NULL) {
-        printf("No se ha podido abrir el fichero %s.", argv[1]);
-        return -1;
-    }
-
-    yyout = fopen(argv[2], "w");
-    if (yyout == NULL) {
-        printf("No se ha podido abrir el fichero %s.", argv[2]);
-        fclose(yyin);
-        return -1;
-    }
-
-    status = yylex();
-    fclose(yyin);
-    fclose(yyout);
-    return status;
-}
