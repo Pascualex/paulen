@@ -7,7 +7,7 @@
     int row = 1;
     int col = 1;
 
-    void print_and_update(char *format, ...);
+    void print_and_update();
 %}
 
 %option noyywrap
@@ -17,49 +17,49 @@ LETRA [a-zA-Z]
 
 %%
     /* Palabras reservadas */
-"main" { col += yyleng; return TOK_MAIN; }
-"int" { col += yyleng; return TOK_INT; }
-"bool" { col += yyleng; return TOK_BOOLEAN; }
-"array" { col += yyleng; return TOK_ARRAY; }
-"function" { col += yyleng; return TOK_FUNCTION; }
-"if" { col += yyleng; return TOK_IF; }
-"else" { col += yyleng; return TOK_ELSE; }
-"while" { col += yyleng; return TOK_WHILE; }
-"scanf" { col += yyleng; return TOK_SCANF; }
-"printf" { col += yyleng; return TOK_PRINTF; }
-"return" { col += yyleng; return TOK_RETURN; }
+"main" { print_and_update(); return TOK_MAIN; }
+"int" { print_and_update(); return TOK_INT; }
+"bool" { print_and_update(); return TOK_BOOLEAN; }
+"array" { print_and_update(); return TOK_ARRAY; }
+"function" { print_and_update(); return TOK_FUNCTION; }
+"if" { print_and_update(); return TOK_IF; }
+"else" { print_and_update(); return TOK_ELSE; }
+"while" { print_and_update(); return TOK_WHILE; }
+"scanf" { print_and_update(); return TOK_SCANF; }
+"printf" { print_and_update(); return TOK_PRINTF; }
+"return" { print_and_update(); return TOK_RETURN; }
 
     /* Símbolos */
-";" { col += yyleng; return TOK_PUNTOYCOMA; }
-"," { col += yyleng; return TOK_COMA; }
-"(" { col += yyleng; return TOK_PARENTESISIZQUIERDO; }
-")" { col += yyleng; return TOK_PARENTESISDERECHO; }
-"[" { col += yyleng; return TOK_CORCHETEIZQUIERDO; }
-"]" { col += yyleng; return TOK_CORCHETEDERECHO; }
-"{" { col += yyleng; return TOK_LLAVEIZQUIERDA; }
-"}" { col += yyleng; return TOK_LLAVEDERECHA; }
-"=" { col += yyleng; return TOK_ASIGNACION; }
-"+" { col += yyleng; return TOK_MAS; }
-"-" { col += yyleng; return TOK_MENOS; }
-"/" { col += yyleng; return TOK_DIVISION; }
-"*" { col += yyleng; return TOK_ASTERISCO; }
-"and" { col += yyleng; return TOK_AND; }
-"or" { col += yyleng; return TOK_OR; }
-"not" { col += yyleng; return TOK_NOT; }
-"==" { col += yyleng; return TOK_IGUAL; }
-"!=" { col += yyleng; return TOK_DISTINTO; }
-"<=" { col += yyleng; return TOK_MENORIGUAL; }
-">=" { col += yyleng; return TOK_MAYORIGUAL; }
-"<" { col += yyleng; return TOK_MENOR; }
-">" { col += yyleng; return TOK_MAYOR; }
+";" { print_and_update(); return TOK_PUNTOYCOMA; }
+"," { print_and_update(); return TOK_COMA; }
+"(" { print_and_update(); return TOK_PARENTESISIZQUIERDO; }
+")" { print_and_update(); return TOK_PARENTESISDERECHO; }
+"[" { print_and_update(); return TOK_CORCHETEIZQUIERDO; }
+"]" { print_and_update(); return TOK_CORCHETEDERECHO; }
+"{" { print_and_update(); return TOK_LLAVEIZQUIERDA; }
+"}" { print_and_update(); return TOK_LLAVEDERECHA; }
+"=" { print_and_update(); return TOK_ASIGNACION; }
+"+" { print_and_update(); return TOK_MAS; }
+"-" { print_and_update(); return TOK_MENOS; }
+"/" { print_and_update(); return TOK_DIVISION; }
+"*" { print_and_update(); return TOK_ASTERISCO; }
+"and" { print_and_update(); return TOK_AND; }
+"or" { print_and_update(); return TOK_OR; }
+"not" { print_and_update(); return TOK_NOT; }
+"==" { print_and_update(); return TOK_IGUAL; }
+"!=" { print_and_update(); return TOK_DISTINTO; }
+"<=" { print_and_update(); return TOK_MENORIGUAL; }
+">=" { print_and_update(); return TOK_MAYORIGUAL; }
+"<" { print_and_update(); return TOK_MENOR; }
+">" { print_and_update(); return TOK_MAYOR; }
 
     /* Constantes */ 
-{DIGITO}+ { col += yyleng; return TOK_CONSTANTE_ENTERA; }
-"true" { col += yyleng; return TOK_TRUE; }
-"false" { col += yyleng; return TOK_FALSE; }
+{DIGITO}+ { print_and_update(); return TOK_CONSTANTE_ENTERA; }
+"true" { print_and_update(); return TOK_TRUE; }
+"false" { print_and_update(); return TOK_FALSE; }
 
     /* Identificadores */
-{LETRA}({LETRA}|{DIGITO})* { col += yyleng; return TOK_IDENTIFICADOR; }
+{LETRA}({LETRA}|{DIGITO})* { print_and_update(); return TOK_IDENTIFICADOR; }
 
     /* Separadores */
 " "+ { col += yyleng; }
@@ -76,3 +76,8 @@ LETRA [a-zA-Z]
 }
 
 %%
+
+void print_and_update() {
+    col += yyleng;
+    fprintf( , ";D: %s", yytext);
+}
