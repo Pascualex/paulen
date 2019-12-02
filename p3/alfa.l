@@ -54,12 +54,25 @@ LETRA [a-zA-Z]
 ">" { print_and_update(); return TOK_MAYOR; }
 
     /* Constantes */ 
-{DIGITO}+ { print_and_update(); return TOK_CONSTANTE_ENTERA; }
 "true" { print_and_update(); return TOK_TRUE; }
 "false" { print_and_update(); return TOK_FALSE; }
+{DIGITO}+ {
+    print_and_update();
+    yylval.numero = atoi(yytext);
+    return TOK_CONSTANTE_ENTERA;
+}
 
     /* Identificadores */
-{LETRA}({LETRA}|{DIGITO})* { print_and_update(); return TOK_IDENTIFICADOR; }
+{LETRA}({LETRA}|{DIGITO})* {
+    if (yyleng > 50) {
+        fprintf(stderr, "Error en [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
+        return TOK_ERROR;
+    } else {
+        print_and_update();
+        strcpy(yylval.cadena, yytext);
+        return TOK_IDENTIFICADOR;
+    }
+}
 
     /* Separadores */
 " "+ { col += yyleng; }
@@ -72,7 +85,7 @@ LETRA [a-zA-Z]
     /* Errores */
 . {
     fprintf(stderr, "Error en [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);
-    return -1;
+    return TOK_ERROR;
 }
 
 %%
