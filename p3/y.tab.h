@@ -130,9 +130,9 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 14 "alfa.y" /* yacc.c:1909  */
+#line 19 "alfa.y" /* yacc.c:1909  */
 
-    char *cadena;
+    char cadena[50];
     int numero;
 
 #line 139 "y.tab.h" /* yacc.c:1909  */

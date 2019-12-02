@@ -6,8 +6,9 @@
 
     int row = 1;
     int col = 1;
+    int codigo_tok;
 
-    void print_and_update();
+    int print_and_update(int codigo_tok_actual);
 %}
 
 %option noyywrap
@@ -17,60 +18,59 @@ LETRA [a-zA-Z]
 
 %%
     /* Palabras reservadas */
-"main" { print_and_update(); return TOK_MAIN; }
-"int" { print_and_update(); return TOK_INT; }
-"bool" { print_and_update(); return TOK_BOOLEAN; }
-"array" { print_and_update(); return TOK_ARRAY; }
-"function" { print_and_update(); return TOK_FUNCTION; }
-"if" { print_and_update(); return TOK_IF; }
-"else" { print_and_update(); return TOK_ELSE; }
-"while" { print_and_update(); return TOK_WHILE; }
-"scanf" { print_and_update(); return TOK_SCANF; }
-"printf" { print_and_update(); return TOK_PRINTF; }
-"return" { print_and_update(); return TOK_RETURN; }
+"main" { return print_and_update(TOK_MAIN); }
+"int" { return print_and_update(TOK_INT); }
+"bool" { return print_and_update(TOK_BOOLEAN); }
+"array" { return print_and_update(TOK_ARRAY); }
+"function" { return print_and_update(TOK_FUNCTION); }
+"if" { return print_and_update(TOK_IF); }
+"else" { return print_and_update(TOK_ELSE); }
+"while" { return print_and_update(TOK_WHILE); }
+"scanf" { return print_and_update(TOK_SCANF); }
+"printf" { return print_and_update(TOK_PRINTF); }
+"return" { return print_and_update(TOK_RETURN); }
 
     /* Símbolos */
-";" { print_and_update(); return TOK_PUNTOYCOMA; }
-"," { print_and_update(); return TOK_COMA; }
-"(" { print_and_update(); return TOK_PARENTESISIZQUIERDO; }
-")" { print_and_update(); return TOK_PARENTESISDERECHO; }
-"[" { print_and_update(); return TOK_CORCHETEIZQUIERDO; }
-"]" { print_and_update(); return TOK_CORCHETEDERECHO; }
-"{" { print_and_update(); return TOK_LLAVEIZQUIERDA; }
-"}" { print_and_update(); return TOK_LLAVEDERECHA; }
-"=" { print_and_update(); return TOK_ASIGNACION; }
-"+" { print_and_update(); return TOK_MAS; }
-"-" { print_and_update(); return TOK_MENOS; }
-"/" { print_and_update(); return TOK_DIVISION; }
-"*" { print_and_update(); return TOK_ASTERISCO; }
-"and" { print_and_update(); return TOK_AND; }
-"or" { print_and_update(); return TOK_OR; }
-"not" { print_and_update(); return TOK_NOT; }
-"==" { print_and_update(); return TOK_IGUAL; }
-"!=" { print_and_update(); return TOK_DISTINTO; }
-"<=" { print_and_update(); return TOK_MENORIGUAL; }
-">=" { print_and_update(); return TOK_MAYORIGUAL; }
-"<" { print_and_update(); return TOK_MENOR; }
-">" { print_and_update(); return TOK_MAYOR; }
+";" { return print_and_update(TOK_PUNTOYCOMA); }
+"," { return print_and_update(TOK_COMA); }
+"(" { return print_and_update(TOK_PARENTESISIZQUIERDO); }
+")" { return print_and_update(TOK_PARENTESISDERECHO); }
+"[" { return print_and_update(TOK_CORCHETEIZQUIERDO); }
+"]" { return print_and_update(TOK_CORCHETEDERECHO); }
+"{" { return print_and_update(TOK_LLAVEIZQUIERDA); }
+"}" { return print_and_update(TOK_LLAVEDERECHA); }
+"=" { return print_and_update(TOK_ASIGNACION); }
+"+" { return print_and_update(TOK_MAS); }
+"-" { return print_and_update(TOK_MENOS); }
+"/" { return print_and_update(TOK_DIVISION); }
+"*" { return print_and_update(TOK_ASTERISCO); }
+"and" { return print_and_update(TOK_AND); }
+"or" { return print_and_update(TOK_OR); }
+"not" { return print_and_update(TOK_NOT); }
+"==" { return print_and_update(TOK_IGUAL); }
+"!=" { return print_and_update(TOK_DISTINTO); }
+"<=" { return print_and_update(TOK_MENORIGUAL); }
+">=" { return print_and_update(TOK_MAYORIGUAL); }
+"<" { return print_and_update(TOK_MENOR); }
+">" { return print_and_update(TOK_MAYOR); }
 
     /* Constantes */ 
-"true" { print_and_update(); return TOK_TRUE; }
-"false" { print_and_update(); return TOK_FALSE; }
+"true" { return print_and_update(TOK_TRUE); }
+"false" { return print_and_update(TOK_FALSE); }
 {DIGITO}+ {
-    print_and_update();
     yylval.numero = atoi(yytext);
-    return TOK_CONSTANTE_ENTERA;
+    return print_and_update(TOK_CONSTANTE_ENTERA);
 }
 
     /* Identificadores */
 {LETRA}({LETRA}|{DIGITO})* {
     if (yyleng > 50) {
         fprintf(stderr, "Error en [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
+        codigo_tok = TOK_ERROR;
         return TOK_ERROR;
     } else {
-        print_and_update();
         strcpy(yylval.cadena, yytext);
-        return TOK_IDENTIFICADOR;
+        return print_and_update(TOK_IDENTIFICADOR);
     }
 }
 
@@ -85,12 +85,15 @@ LETRA [a-zA-Z]
     /* Errores */
 . {
     fprintf(stderr, "Error en [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);
+    codigo_tok = TOK_ERROR;
     return TOK_ERROR;
 }
 
 %%
 
-void print_and_update() {
+int print_and_update(int codigo_tok_actual) {
+    codigo_tok = codigo_tok_actual;
     col += yyleng;
-    fprintf( , ";D: %s", yytext);
+    fprintf(yyout, ";D:\t%s\n", yytext);
+    return codigo_tok;
 }

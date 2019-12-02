@@ -7,12 +7,17 @@
     extern FILE *yyin;
     extern FILE *yyout;
     extern int yylex(void);
+    extern int yyleng;
+
+    extern int row;
+    extern int col;
+    extern int codigo_tok;
 
     int yyerror(char *s);
 %}
 
 %union {
-    char *cadena;
+    char cadena[50];
     int numero;
 }
 
@@ -124,13 +129,13 @@ funcion:
     {fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");};
 
 parametros_funcion: 
-    parametros_funcion resto_parametros_funcion
+    parametro_funcion resto_parametros_funcion
     {fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametros_funcion> <resto_parametros_funcion>\n");} |
     /* lambda */ 
     {fprintf(yyout, ";R24:\t<parametros_funcion> ::=\n");};
 
 resto_parametros_funcion:
-    TOK_PUNTOYCOMA parametros_funcion resto_parametros_funcion
+    TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion
     {fprintf(yyout, ";R25:\t<resto_parametros_funcion> ::= ; <parametros_funcion> <resto_parametros_funcion>\n");} |
     /* lambda */ 
     {fprintf(yyout, ";R26:\t<resto_parametros_funcion> ::=\n");};
@@ -174,9 +179,9 @@ bloque:
     {fprintf(yyout, ";R41:\t<bloque> ::= <bucle>\n");};
 
 asignacion: 
-    identificador TOK_IGUAL exp 
+    identificador TOK_ASIGNACION exp 
     {fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");}|
-    elemento_vector TOK_IGUAL exp
+    elemento_vector TOK_ASIGNACION exp
     {fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");};
 
 elemento_vector: 
@@ -199,7 +204,7 @@ lectura:
 
 escritura: 
     TOK_PRINTF exp
-    {fprintf(yyout, ";R56:\t<escritura> ::= printf <identificador>\n");};
+    {fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");};
 
 retorno_funcion: 
     TOK_RETURN exp
@@ -311,5 +316,8 @@ int main(int argc, char **argv) {
 }
 
 int yyerror(char *s) {
+    if (codigo_tok != TOK_ERROR) {
+        fprintf(stderr, "Error sintactico en [lin %d, col %d]\n", row, col-yyleng);
+    }
     return 0;
 }

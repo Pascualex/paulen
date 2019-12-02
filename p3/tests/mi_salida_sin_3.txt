@@ -1,18 +1,49 @@
-TOK_MAIN 258 main
-TOK_LLAVEIZQUIERDA 275 {
-TOK_INT 259 int
-TOK_IDENTIFICADOR 291 x
-TOK_PUNTOYCOMA 269 ;
-TOK_INT 259 int
-TOK_IDENTIFICADOR 291 y
-TOK_PUNTOYCOMA 269 ;
-TOK_INT 259 int
-TOK_IDENTIFICADOR 291 z
-TOK_PUNTOYCOMA 269 ;
-TOK_IDENTIFICADOR 291 z
-TOK_ASIGNACION 277 =
-TOK_IDENTIFICADOR 291 x
-TOK_MAS 278 +
-TOK_IDENTIFICADOR 291 y
-TOK_PUNTOYCOMA 269 ;
-TOK_PRINTF 267 printf
+;D:	main
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	y
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	z
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	z
+;R2:	<declaraciones> ::= <declaracion>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
+;R21:	<funciones> ::=
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	+
+;R80:	<exp> ::= <identificador>
+;D:	y
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R80:	<exp> ::= <identificador>
+;R72:	<exp> ::= <exp> + <exp>
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	printf
