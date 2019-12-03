@@ -69,12 +69,14 @@
 /* Errores */
 %token TOK_ERROR
 
+/* Precedencia de operadores */
+%left TOK_OR TOK_AND TOK_NOT
+%left TOK_MENOR TOK_MAYOR TOK_IGUAL TOK_DISTINTO TOK_MENORIGUAL TOK_MAYORIGUAL
+%left TOK_MAS TOK_MENOS
+%left TOK_ASTERISCO TOK_DIVISION
+
 %start programa
 
-%left "||" "&&" "!"
-%left "<" ">" "==" "!=" "<=" ">="
-%left "+" "-"
-%left "*" "/"
 
 %%
 
