@@ -10,8 +10,8 @@ typedef struct _HashTable HashTable;
 
 HashTable *HashTable_create();
 void HashTable_free(HashTable *hash_table);
-void HashTable_put(HashTable *hash_table, char key[50], int value);
-bool HashTable_contains_key(HashTable *hash_table, char key[50]);
-int HashTable_get(HashTable *hash_table, char key[50]);
+void HashTable_put(HashTable *hash_table, char key[51], int value);
+bool HashTable_contains_key(HashTable *hash_table, char key[51]);
+int HashTable_get(HashTable *hash_table, char key[51]);
 
 #endif

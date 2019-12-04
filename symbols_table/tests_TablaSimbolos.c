@@ -1,6 +1,6 @@
 #include "TablaSimbolos.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -27,7 +27,7 @@ bool only_one_word(char line[100]) {
 int main(int argc, char **argv) {
     FILE *input_file, *output_file;
     TablaSimbolos *tabla_simbolos;
-    char line[100], id[50];
+    char line[100], id[51];
     bool local;
     int value, ret;
 
@@ -75,11 +75,11 @@ int main(int argc, char **argv) {
             sscanf(line, "%s %d", id, &value);
             if (value >= 0) {
                 if (local) {
-                    ret = TablaSimbolos_declarar_global(tabla_simbolos, id, value);
+                    ret = TablaSimbolos_declarar_local(tabla_simbolos, id, value);
                     if (ret == OK) fprintf(output_file, "%s\n", id);
                     else fprintf(output_file, "-1 %s\n", id);
                 } else {
-                    ret = TablaSimbolos_declarar_local(tabla_simbolos, id, value);
+                    ret = TablaSimbolos_declarar_global(tabla_simbolos, id, value);
                     if (ret == OK) fprintf(output_file, "%s\n", id);
                     else fprintf(output_file, "-1 %s\n", id);
                 }

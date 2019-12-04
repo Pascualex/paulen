@@ -32,7 +32,7 @@ void TablaSimbolos_free(TablaSimbolos *tabla_simbolos) {
     free(tabla_simbolos);
 }
 
-int TablaSimbolos_declarar_global(TablaSimbolos *tabla_simbolos, char id[50], int value) {
+int TablaSimbolos_declarar_global(TablaSimbolos *tabla_simbolos, char id[51], int value) {
     if (tabla_simbolos == NULL) return ERROR;
     if (value < 0) return ERROR;
     if (HashTable_contains_key(tabla_simbolos->contexto_global, id)) return ERROR;
@@ -40,12 +40,12 @@ int TablaSimbolos_declarar_global(TablaSimbolos *tabla_simbolos, char id[50], in
     return OK;
 }
 
-int TablaSimbolos_uso_global(TablaSimbolos *tabla_simbolos, char id[50]) {
+int TablaSimbolos_uso_global(TablaSimbolos *tabla_simbolos, char id[51]) {
     if (tabla_simbolos == NULL) return ERROR;
     return HashTable_get(tabla_simbolos->contexto_global, id);
 }
 
-int TablaSimbolos_declarar_local(TablaSimbolos *tabla_simbolos, char id[50], int value) {
+int TablaSimbolos_declarar_local(TablaSimbolos *tabla_simbolos, char id[51], int value) {
     if (tabla_simbolos == NULL) return ERROR;
     if (tabla_simbolos->contexto_local == NULL) return ERROR;
     if (value < 0) return ERROR;
@@ -54,13 +54,13 @@ int TablaSimbolos_declarar_local(TablaSimbolos *tabla_simbolos, char id[50], int
     return OK;
 }
 
-int TablaSimbolos_uso_local(TablaSimbolos *tabla_simbolos, char id[50]) {
+int TablaSimbolos_uso_local(TablaSimbolos *tabla_simbolos, char id[51]) {
     if (tabla_simbolos == NULL) return ERROR;
     if (tabla_simbolos->contexto_local == NULL) return ERROR;
     return HashTable_get(tabla_simbolos->contexto_local, id);
 }
 
-int TablaSimbolos_declarar_funcion(TablaSimbolos *tabla_simbolos, char id[50], int value) {
+int TablaSimbolos_declarar_funcion(TablaSimbolos *tabla_simbolos, char id[51], int value) {
     if (tabla_simbolos == NULL) return ERROR;
     if (tabla_simbolos->contexto_local != NULL) return ERROR;
     if (value >= -1) return ERROR;
