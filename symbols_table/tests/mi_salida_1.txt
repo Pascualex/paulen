@@ -1,0 +1,3 @@
+Declarar x (global) con valor 1
+Declarar x (global) con valor 1
+Imprimir x (global)

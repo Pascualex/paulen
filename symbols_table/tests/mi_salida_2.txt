@@ -1,0 +1,15 @@
+Declarar i (global) con valor 1
+Declarar j (global) con valor 2
+Abrir contexto suma
+Declarar arg1 (local) con valor 3
+Declarar arg2 (local) con valor 4
+Declarar aux (local) con valor 5
+Declarar aux (local) con valor 5
+Imprimir arg1 (local)
+Imprimir arg2 (local)
+Cerrar contexto
+Imprimir j (global)
+Imprimir i (global)
+Imprimir suma (global)
+Imprimir j (global)
+Imprimir i (global)
