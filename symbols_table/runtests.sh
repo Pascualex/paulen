@@ -1,6 +1,6 @@
 num_tests=2
 echo Compilando los analizadores...
-gcc -Wall -o tests_TablaSimbolos tests_TablaSimbolos.c TablaSimbolos.c TablaSimbolos.h
+gcc -Wall -o tests_TablaSimbolos tests_TablaSimbolos.c TablaSimbolos.c TablaSimbolos.h HashTable.c HashTable.h
 echo Ejecutando tests:
 success_count=0
 for i in `seq 1 $num_tests`

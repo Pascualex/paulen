@@ -26,24 +26,33 @@ bool only_one_word(char line[100]) {
 
 int main(int argc, char **argv) {
     FILE *input_file, *output_file;
+    TablaSimbolos *tabla_simbolos;
     char line[100], id[50];
     bool local;
-    int value;
+    int value, ret;
 
     if (argc != 3) {
-        printf("Número incorrecto de argumentos.");
+        printf("Número incorrecto de argumentos.\n");
         return -1;
     }
 
     input_file = fopen(argv[1], "r");
     if (input_file == NULL) {
-        printf("No se ha podido abrir el fichero %s.", argv[1]);
+        printf("No se ha podido abrir el fichero %s.\n", argv[1]);
         return -1;
     }
 
     output_file = fopen(argv[2], "w");
     if (output_file == NULL) {
-        printf("No se ha podido abrir el fichero %s.", argv[2]);
+        printf("No se ha podido abrir el fichero %s.\n", argv[2]);
+        fclose(input_file);
+        return -1;
+    }
+
+    tabla_simbolos = TablaSimbolos_create();
+    if (tabla_simbolos == NULL) {
+        printf("No se ha podido crear la tabla de símbolos.\n");
+        fclose(output_file);
         fclose(input_file);
         return -1;
     }
@@ -56,36 +65,43 @@ int main(int argc, char **argv) {
         if (only_one_word(line)) {
             sscanf(line, "%s", id);
             if (local) {
-                TablaSimbolos_uso_local(id);
-                fprintf(output_file, "Imprimir %s (local)\n", id);
+                ret = TablaSimbolos_uso_local(tabla_simbolos, id);
+                fprintf(output_file, "%s %d\n", id, ret);
             } else {
-                TablaSimbolos_uso_global(id);
-                fprintf(output_file, "Imprimir %s (global)\n", id);
+                ret = TablaSimbolos_uso_global(tabla_simbolos, id);
+                fprintf(output_file, "%s %d\n", id, ret);
             }
         } else {
             sscanf(line, "%s %d", id, &value);
             if (value >= 0) {
                 if (local) {
-                    TablaSimbolos_uso_local(id);
-                    fprintf(output_file, "Declarar %s (local) con valor %d\n", id, value);
+                    ret = TablaSimbolos_declarar_global(tabla_simbolos, id, value);
+                    if (ret == OK) fprintf(output_file, "%s\n", id);
+                    else fprintf(output_file, "-1 %s\n", id);
                 } else {
-                    TablaSimbolos_uso_global(id);
-                    fprintf(output_file, "Declarar %s (global) con valor %d\n", id, value);
+                    ret = TablaSimbolos_declarar_local(tabla_simbolos, id, value);
+                    if (ret == OK) fprintf(output_file, "%s\n", id);
+                    else fprintf(output_file, "-1 %s\n", id);
+                }
+            } else if (value < -1) {
+                if (strcmp(id, "cierre") == 0 && value == -999) {
+                    TablaSimbolos_terminar_funcion(tabla_simbolos);
+                    local = false;
+                    fprintf(output_file, "cierre\n");
+                } else {
+                    ret = TablaSimbolos_declarar_funcion(tabla_simbolos, id, value);
+                    if (ret == OK) fprintf(output_file, "%s\n", id);
+                    else fprintf(output_file, "-1 %s\n", id);
                 }
             } else {
-                if (strcmp(id, "cierre") == 0 && value == -999) {
-                    local = false;
-                    fprintf(output_file, "Cerrar contexto\n");
-                } else {
-                    local = true;
-                    fprintf(output_file, "Abrir contexto %s\n", id);
-                }
+                fprintf(output_file, "ERROR EN EL TEST - El identificador no puede ser -1\n");
             }
         }
     }
 
-    fclose(input_file);
+    TablaSimbolos_free(tabla_simbolos);
     fclose(output_file);
+    fclose(input_file);
 
     return 0;
 }
