@@ -1,13 +1,23 @@
 #include "HashTable.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+
+#define DEBUG
+
+#ifdef DEBUG
+#define DEBUG_PRINT(...) printf(__VA_ARGS__)
+#else
+#define DEBUG_PRINT(...) do {} while (0)
+#endif
 
 #define INITIAL_SIZE 8
 
 typedef struct _Entry Entry;
 
 struct _HashTable {
-	Entry **entries;	
+	Entry **entries;
+    int n_entries;
 	int size;
 };
 
@@ -16,6 +26,8 @@ struct _Entry {
 	int value;
 	Entry *next;
 };
+
+void HashTable_resize(HashTable *hash_table);
 
 Entry *Entry_create(char key[51], int value);
 void Entry_free(Entry *entry);
@@ -39,7 +51,10 @@ HashTable *HashTable_create() {
         hash_table->entries[i] = NULL;
     }
 
+    hash_table->n_entries = 0;
     hash_table->size = INITIAL_SIZE;
+
+    DEBUG_PRINT("HashTable ready (%d/%d):\n", hash_table->n_entries, hash_table->size);
 
     return hash_table;
 }
@@ -64,8 +79,11 @@ void HashTable_put(HashTable *hash_table, char key[51], int value) {
     if (hash_table == NULL) return;
 
     index = hash_key(key)%hash_table->size;
+    DEBUG_PRINT(" -> Insertion with index %d (%d/%d)\n", index, hash_table->n_entries+1, hash_table->size);
     if (hash_table->entries[index] == NULL) {
+        if (hash_table->n_entries >= hash_table->size/2) HashTable_resize(hash_table);
         hash_table->entries[index] = Entry_create(key, value);
+        hash_table->n_entries++;
     } else {
         current_entry = hash_table->entries[index];
         if (strcmp(current_entry->key, key) == 0) {
@@ -79,7 +97,9 @@ void HashTable_put(HashTable *hash_table, char key[51], int value) {
                 return;
             }
         }
+        if (hash_table->n_entries >= hash_table->size/2) HashTable_resize(hash_table);
         current_entry->next = Entry_create(key, value);
+        hash_table->n_entries++;
     }
 }
 
@@ -121,6 +141,39 @@ int HashTable_get(HashTable *hash_table, char key[51]) {
         }
         return ERROR;
     }
+}
+
+void HashTable_resize(HashTable *hash_table) {
+    Entry **new_entries, **old_entries, *current_entry;
+    int old_size, i;
+
+    if (hash_table == NULL) return;
+
+    new_entries = (Entry **) malloc(sizeof(Entry *)*hash_table->size*2);
+    if (new_entries == NULL) return;
+
+    old_entries = hash_table->entries;
+    old_size = hash_table->size;
+    hash_table->entries = new_entries;
+    hash_table->n_entries = 0;
+    hash_table->size *= 2;
+
+    for (i = 0; i < hash_table->size; i++) {
+        hash_table->entries[i] = NULL;
+    }
+
+    DEBUG_PRINT("Resize from size %d to %d:\n", old_size, hash_table->size);
+    for (i = 0; i < old_size; i++) {
+        current_entry = old_entries[i];
+        while (current_entry != NULL) {
+            HashTable_put(hash_table, current_entry->key, current_entry->value);
+            current_entry = current_entry->next;
+        }
+        if (old_entries[i] != NULL) Entry_free(old_entries[i]);
+    }
+    DEBUG_PRINT("HashTable ready (%d/%d):\n", hash_table->n_entries, hash_table->size);
+
+    free(old_entries);
 }
 
 Entry *Entry_create(char key[51], int value) {

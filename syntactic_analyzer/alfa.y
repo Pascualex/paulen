@@ -17,7 +17,7 @@
 %}
 
 %union {
-    char cadena[50];
+    char cadena[51];
     int numero;
 }
 

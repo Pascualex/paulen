@@ -132,7 +132,7 @@ union YYSTYPE
 {
 #line 19 "alfa.y" /* yacc.c:1909  */
 
-    char cadena[50];
+    char cadena[51];
     int numero;
 
 #line 139 "y.tab.h" /* yacc.c:1909  */

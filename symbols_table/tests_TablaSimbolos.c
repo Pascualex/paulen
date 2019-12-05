@@ -4,25 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-bool only_one_word(char line[100]) {
-    bool first_word_found, space_found;
-    int i;
-
-    first_word_found = false;
-    space_found = false;
-
-    for (i = 0; i < 100; i++) {
-        if (line[i] == '\0') break;
-        if (line[i] == ' ' || line[i] == '\t' || line[i] == '\n') {
-            if (first_word_found) space_found = true;
-        } else {
-            first_word_found = true;
-            if (space_found) return false;
-        }
-    }
-
-    return true;
-}
+bool only_one_word(char line[100]);
 
 int main(int argc, char **argv) {
     FILE *input_file, *output_file;
@@ -104,4 +86,24 @@ int main(int argc, char **argv) {
     fclose(input_file);
 
     return 0;
+}
+
+bool only_one_word(char line[100]) {
+    bool first_word_found, space_found;
+    int i;
+
+    first_word_found = false;
+    space_found = false;
+
+    for (i = 0; i < 100; i++) {
+        if (line[i] == '\0') break;
+        if (line[i] == ' ' || line[i] == '\t' || line[i] == '\n') {
+            if (first_word_found) space_found = true;
+        } else {
+            first_word_found = true;
+            if (space_found) return false;
+        }
+    }
+
+    return true;
 }
