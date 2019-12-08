@@ -20,7 +20,7 @@ LETRA [a-zA-Z]
     /* Palabras reservadas */
 "main" { return print_and_update(TOK_MAIN); }
 "int" { return print_and_update(TOK_INT); }
-"bool" { return print_and_update(TOK_BOOLEAN); }
+"boolean" { return print_and_update(TOK_BOOLEAN); }
 "array" { return print_and_update(TOK_ARRAY); }
 "function" { return print_and_update(TOK_FUNCTION); }
 "if" { return print_and_update(TOK_IF); }
@@ -44,9 +44,9 @@ LETRA [a-zA-Z]
 "-" { return print_and_update(TOK_MENOS); }
 "/" { return print_and_update(TOK_DIVISION); }
 "*" { return print_and_update(TOK_ASTERISCO); }
-"and" { return print_and_update(TOK_AND); }
-"or" { return print_and_update(TOK_OR); }
-"not" { return print_and_update(TOK_NOT); }
+"&&" { return print_and_update(TOK_AND); }
+"||" { return print_and_update(TOK_OR); }
+"!" { return print_and_update(TOK_NOT); }
 "==" { return print_and_update(TOK_IGUAL); }
 "!=" { return print_and_update(TOK_DISTINTO); }
 "<=" { return print_and_update(TOK_MENORIGUAL); }
