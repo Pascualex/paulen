@@ -72,6 +72,7 @@ int main(int argc, char **argv) {
                     fprintf(output_file, "cierre\n");
                 } else {
                     ret = TablaSimbolos_declarar_funcion(tabla_simbolos, id, value);
+                    local = true;
                     if (ret == OK) fprintf(output_file, "%s\n", id);
                     else fprintf(output_file, "-1 %s\n", id);
                 }

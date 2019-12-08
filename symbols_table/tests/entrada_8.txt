@@ -1,0 +1,16 @@
+x 1
+y 2
+resultado 3
+suma -10
+suma 4
+suma2 5
+suma
+suma2
+cierre -999
+x
+y
+resultado
+suma
+x
+y
+resultado

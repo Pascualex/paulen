@@ -1,0 +1,11 @@
+x 1
+negar -10
+numero 2
+w 3
+w
+arg
+w
+cierre -999
+x
+negar
+x

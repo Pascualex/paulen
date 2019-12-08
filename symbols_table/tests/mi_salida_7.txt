@@ -1,0 +1,19 @@
+x
+y
+resultado
+suma
+num1
+num2
+-1 suma
+suma -10
+num1 4
+num2 5
+suma -10
+cierre
+x 1
+y 2
+resultado 3
+suma -10
+x 1
+y 2
+resultado 3

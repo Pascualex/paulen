@@ -1,4 +1,4 @@
-num_tests=2
+num_tests=17
 echo Compilando el interprete de tests de la tabla de simbolos...
 gcc -Wall -o tests_TablaSimbolos tests_TablaSimbolos.c TablaSimbolos.c TablaSimbolos.h HashTable.c HashTable.h
 echo Ejecutando tests:

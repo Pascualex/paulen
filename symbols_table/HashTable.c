@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define DEBUG
-
 #ifdef DEBUG
 #define DEBUG_PRINT(...) printf(__VA_ARGS__)
 #else
@@ -81,9 +79,9 @@ void HashTable_put(HashTable *hash_table, char key[51], int value) {
     index = hash_key(key)%hash_table->size;
     DEBUG_PRINT(" -> Insertion with index %d (%d/%d)\n", index, hash_table->n_entries+1, hash_table->size);
     if (hash_table->entries[index] == NULL) {
-        if (hash_table->n_entries >= hash_table->size/2) HashTable_resize(hash_table);
         hash_table->entries[index] = Entry_create(key, value);
         hash_table->n_entries++;
+        if (hash_table->n_entries > hash_table->size/2) HashTable_resize(hash_table);
     } else {
         current_entry = hash_table->entries[index];
         if (strcmp(current_entry->key, key) == 0) {
@@ -97,9 +95,9 @@ void HashTable_put(HashTable *hash_table, char key[51], int value) {
                 return;
             }
         }
-        if (hash_table->n_entries >= hash_table->size/2) HashTable_resize(hash_table);
         current_entry->next = Entry_create(key, value);
         hash_table->n_entries++;
+        if (hash_table->n_entries > hash_table->size/2) HashTable_resize(hash_table);
     }
 }
 

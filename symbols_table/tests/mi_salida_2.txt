@@ -1,15 +1,8 @@
 i
 j
-suma
-arg1
-arg2
-aux
--1 aux
-arg1 3
-arg2 4
+-1 i
+-1 arg
+arg -1
 cierre
-j 2
 i 1
-suma -10
 j 2
-i 1

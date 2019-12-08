@@ -1,0 +1,14 @@
+x 1
+resultado 2
+factorial -10
+n 3
+n
+n
+factorial
+n
+cierre -999
+x
+resultado
+factorial
+x
+resultado

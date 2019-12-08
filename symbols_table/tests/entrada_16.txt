@@ -1,0 +1,19 @@
+i 1
+j 2
+k 3
+doble -10
+arg 4
+arg
+cierre -999
+esdoble -11
+arg 5
+dosPorArg 6
+dosPorArg
+doble
+arg
+cierre -999
+j
+k
+esdoble
+j
+k

@@ -1,0 +1,23 @@
+num 1
+num2 2
+potencia -10
+x 3
+exp 4
+x 5
+i 6
+x
+i
+i
+exp
+x
+x
+x
+i
+i
+x
+cierre -999
+num
+num2
+potencia
+num
+num2

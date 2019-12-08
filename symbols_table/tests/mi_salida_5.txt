@@ -1,0 +1,12 @@
+i
+j
+mayorque
+num
+-1 num
+num2 -1
+cierre
+j 2
+i 1
+mayorque -10
+j 2
+i 1

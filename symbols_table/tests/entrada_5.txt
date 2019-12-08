@@ -1,0 +1,12 @@
+i 1
+j 2
+mayorque -10
+num 3
+num 4
+num2
+cierre -999
+j
+i
+mayorque
+j
+i

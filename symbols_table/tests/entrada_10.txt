@@ -1,0 +1,11 @@
+x 1
+doble -10
+num 2
+dos 3
+dos
+dos
+num
+cierre -999
+x
+doble
+x

@@ -57,7 +57,11 @@ int TablaSimbolos_declarar_local(TablaSimbolos *tabla_simbolos, char id[51], int
 int TablaSimbolos_uso_local(TablaSimbolos *tabla_simbolos, char id[51]) {
     if (tabla_simbolos == NULL) return ERROR;
     if (tabla_simbolos->contexto_local == NULL) return ERROR;
-    return HashTable_get(tabla_simbolos->contexto_local, id);
+    if (HashTable_contains_key(tabla_simbolos->contexto_local, id)) {
+        return HashTable_get(tabla_simbolos->contexto_local, id);
+    } else {
+        return HashTable_get(tabla_simbolos->contexto_global, id);
+    }
 }
 
 int TablaSimbolos_declarar_funcion(TablaSimbolos *tabla_simbolos, char id[51], int value) {

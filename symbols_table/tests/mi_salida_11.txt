@@ -1,0 +1,14 @@
+x
+resultado
+factorial
+n
+n 3
+n 3
+factorial -10
+n 3
+cierre
+x 1
+resultado 2
+factorial -10
+x 1
+resultado 2
