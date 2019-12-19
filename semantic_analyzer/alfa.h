@@ -22,6 +22,8 @@ typedef struct {
     int numero_elementos;
     int posicion;
     int valor_entero;
+    int num_parametros;
+    int num_variables_locales;
     bool es_direccion;
     int etiqueta;
 } tipo_atributos;

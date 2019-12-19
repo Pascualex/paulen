@@ -21,9 +21,8 @@
     bool local;
     int pos_parametro_actual;
     int num_parametros_actual;
-    int num_variables_locales_actual;
     int pos_variable_local_actual;
-
+    int num_variables_locales_actual;
     tipo_atributos atributos;
     
     int yyerror(char *s);
@@ -81,6 +80,9 @@
 /* Errores */
 %token TOK_ERROR
 
+%type <tipo_atributos> fn_name
+%type <tipo_atributos> fn_declaration
+
 /* Precedencia de operadores */
 %left TOK_OR TOK_AND TOK_NOT
 %left TOK_MENOR TOK_MAYOR TOK_IGUAL TOK_DISTINTO TOK_MENORIGUAL TOK_MAYORIGUAL
@@ -88,7 +90,6 @@
 %left TOK_ASTERISCO TOK_DIVISION
 
 %start programa
-
 
 %%
 
@@ -150,26 +151,29 @@ fn_name:
             return PARAR_COMPILADOR;
         }
         local = true;
-        TablaSimbolos_declarar_global(tabla_simbolos, yylval.atributos.lexema, &atributos);
-        TablaSimbolos_declarar_local(tabla_simbolos, yylval.atributos.lexema, &atributos);
-        num_variables_locales_actual = 0;
-        pos_variable_local_actual = 1;
         num_parametros_actual = 0;
         pos_parametro_actual = 0;
-        strcpy(atributos.lexema, yylval.atributos.lexema);
+        num_variables_locales_actual = 0;
+        pos_variable_local_actual = 1;
+        yylval.atributos.num_parametros = num_parametros_actual;
+        yylval.atributos.num_variables_locales = num_variables_locales;
+        TablaSimbolos_declarar_global(tabla_simbolos, yylval.atributos.lexema, &atributos);
+        TablaSimbolos_declarar_local(tabla_simbolos, yylval.atributos.lexema, &atributos);
+        strcpy($$.lexema, yylval.atributos.lexema);
     };
 
 fn_declaration: 
     fn_name TOK_PARENTESISIZQUIERDO parametro_funcion TOK_PARENTESISDERECHO TOK_CORCHETEIZQUIERDO declaraciones_funcion {
-        
-        // ???
-        
-        strcpy(atributos.lexema, yylval.atributos.lexema);
+        TablaSimbolos_uso_global(tabla_simbolos, $1.lexema)->num_parametros = num_parametros_actual;
+        TablaSimbolos_uso_local(tabla_simbolos, $1.lexema)->num_parametros = num_parametros_actual;
+        strcpy($$.lexema, $1.lexema);
     };
 
 funcion:
     fn_declaration sentencias TOK_CORCHETEDERECHO {
-        
+        local = false;
+        TablaSimbolos_uso_global(tabla_simbolos, $1.lexema)->num_variables_locales = num_variables_locales_actual;
+        TablaSimbolos_uso_local(tabla_simbolos, $1.lexema)->num_variables_locales = num_variables_locales_actual;
     };
 
 parametros_funcion: 
