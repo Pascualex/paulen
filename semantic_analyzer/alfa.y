@@ -19,6 +19,10 @@
 
     TablaSimbolos *tabla_simbolos;
     bool local;
+    int pos_parametro_actual;
+    int num_parametros_actual;
+    int num_variables_locales_actual;
+    int pos_variable_local_actual;
 
     tipo_atributos atributos;
     
@@ -122,7 +126,7 @@ clase_vector:
     TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO TOK_CONSTANTE_ENTERA TOK_CORCHETEDERECHO { 
         atributos.tam_vector = yylval.atributos.valor_entero;
         if (tam_vector_actual < 1 || tam_vector_actual > MAX_TAM_VECTOR) {
-            printf("Tamaño de vector inválido.\n");
+            printf("ERROR: Tamaño de vector inválido.\n");
             return PARAR_COMPILADOR;
         }
     };
@@ -139,9 +143,34 @@ funciones:
     /* lambda */ 
     { fprintf(yyout, ";R21:\t<funciones> ::=\n"); };
 
-funcion: 
-    TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA
-    { fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n"); };
+fn_name:
+    TOK_FUNCTION tipo TOK_IDENTIFICADOR {
+        if (TablaSimbolos_existe_global(tabla_simbolos, yylval.atributos.lexema)) {
+            printf("ERROR: nombre de funcion %s ya utilizado.\n", yylval.atributos.lexema);
+            return PARAR_COMPILADOR;
+        }
+        local = true;
+        TablaSimbolos_declarar_global(tabla_simbolos, yylval.atributos.lexema, &atributos);
+        TablaSimbolos_declarar_local(tabla_simbolos, yylval.atributos.lexema, &atributos);
+        num_variables_locales_actual = 0;
+        pos_variable_local_actual = 1;
+        num_parametros_actual = 0;
+        pos_parametro_actual = 0;
+        strcpy(atributos.lexema, yylval.atributos.lexema);
+    };
+
+fn_declaration: 
+    fn_name TOK_PARENTESISIZQUIERDO parametro_funcion TOK_PARENTESISDERECHO TOK_CORCHETEIZQUIERDO declaraciones_funcion {
+        
+        // ???
+        
+        strcpy(atributos.lexema, yylval.atributos.lexema);
+    };
+
+funcion:
+    fn_declaration sentencias TOK_CORCHETEDERECHO {
+        
+    };
 
 parametros_funcion: 
     parametro_funcion resto_parametros_funcion
@@ -156,7 +185,7 @@ resto_parametros_funcion:
     { fprintf(yyout, ";R26:\t<resto_parametros_funcion> ::=\n"); };
 
 parametro_funcion: 
-    tipo identificador
+    tipo idpf
     { fprintf(yyout, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n"); };
 
 declaraciones_funcion:
@@ -302,19 +331,32 @@ identificador:
         strcpy(atributos.lexema, yylval.atributos.lexema);
         if (local) {
             if (TablaSimbolos_existe_local(tabla_simbolos, atributos.lexema)) {
-                printf("Identificador %s duplicado.\n", atributos.lexema);
+                printf("ERROR: Identificador %s duplicado.\n", atributos.lexema);
                 return PARAR_COMPILADOR;
             } else {
                 TablaSimbolos_declarar_local(tabla_simbolos, atributos.lexema, &atributos);
             }
         } else {
             if (TablaSimbolos_existe_global(tabla_simbolos, atributos.lexema)) {
-                printf("Identificador %s duplicado.\n", atributos.lexema);
+                printf("ERROR: Identificador %s duplicado.\n", atributos.lexema);
                 return PARAR_COMPILADOR;
             } else {
                 TablaSimbolos_declarar_global(tabla_simbolos, atributos.lexema, &atributos);
             }
         }
+    };
+
+idpf:
+    TOK_IDENTIFICADOR {
+        strcpy(atributos.lexema, yylval.atributos.lexema);
+        if (TablaSimbolos_existe_local(tabla_simbolos, atributos.lexema)) {
+            printf("ERROR: Identificador %s duplicado en la declaración de la función.\n", atributos.lexema);
+            return PARAR_COMPILADOR;
+        }
+        atributos.posicion = pos_parametro_actual;
+        TablaSimbolos_declarar_local(tabla_simbolos, atributos.lexema, &atributos);
+        pos_parametro_actual++;
+        num_parametros_actual++;
     };
 
 %%
