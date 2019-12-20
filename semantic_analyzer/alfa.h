@@ -8,15 +8,18 @@
 
 #define ESCALAR 1
 #define VECTOR 2
+#define FUNCION 3
 
 #define INT 1
 #define BOOLEAN 2
+
+#define FALSE 0
+#define TRUE 1
 
 #define PARAR_COMPILADOR 0
 
 typedef struct {
     char lexema[MAX_LONGITUD_ID+1];
-    int categoria;
     int clase;
     int tipo;
     int numero_elementos;

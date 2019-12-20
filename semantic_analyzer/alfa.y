@@ -19,11 +19,17 @@
 
     TablaSimbolos *tabla_simbolos;
     bool local;
+    bool en_explist;
+    int tipo_actual;
+    int clase_actual;
+    int tam_vector_actual;
+    
     int pos_parametro_actual;
     int num_parametros_actual;
     int pos_variable_local_actual;
     int num_variables_locales_actual;
-    tipo_atributos atributos;
+    
+    tipo_atributos atributos_actuales;
     
     int yyerror(char *s);
 %}
@@ -80,6 +86,10 @@
 /* Errores */
 %token TOK_ERROR
 
+%type <tipo_atributos> exp
+%type <tipo_atributos> constante
+%type <tipo_atributos> constante_entera
+%type <tipo_atributos> constante_logica
 %type <tipo_atributos> fn_name
 %type <tipo_atributos> fn_declaration
 
@@ -93,7 +103,7 @@
 
 %%
 
-programa: 
+programa:
     TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones funciones sentencias TOK_LLAVEDERECHA
     { fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n"); };
 
@@ -109,23 +119,23 @@ declaracion:
 
 clase:
     clase_escalar
-    { atributos.clase = ESCALAR; } |
+    { clase_actual = ESCALAR; } |
     clase_vector
-    { atributos.clase = VECTOR; };
+    { clase_actual = VECTOR; };
 
-clase_escalar: 
+clase_escalar:
     tipo
     { fprintf(yyout, ";R9:\t<clase_escalar> ::= <tipo>\n"); };
 
 tipo:
     TOK_INT 
-    { atributos.tipo = INT; } |
+    { tipo_actual = INT; } |
     TOK_BOOLEAN
-    { atributos.tipo = BOOLEAN; };
+    { tipo_actual = BOOLEAN; };
 
-clase_vector: 
+clase_vector:
     TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO TOK_CONSTANTE_ENTERA TOK_CORCHETEDERECHO { 
-        atributos.tam_vector = yylval.atributos.valor_entero;
+        tam_vector_actual = $4.valor_entero;
         if (tam_vector_actual < 1 || tam_vector_actual > MAX_TAM_VECTOR) {
             printf("ERROR: Tamaño de vector inválido.\n");
             return PARAR_COMPILADOR;
@@ -146,23 +156,28 @@ funciones:
 
 fn_name:
     TOK_FUNCTION tipo TOK_IDENTIFICADOR {
-        if (TablaSimbolos_existe_global(tabla_simbolos, yylval.atributos.lexema)) {
-            printf("ERROR: nombre de funcion %s ya utilizado.\n", yylval.atributos.lexema);
+        if (TablaSimbolos_existe_global(tabla_simbolos, $3.lexema)) {
+            printf("ERROR: nombre de funcion %s ya utilizado.\n", $3.lexema);
             return PARAR_COMPILADOR;
         }
+
         local = true;
         num_parametros_actual = 0;
         pos_parametro_actual = 0;
         num_variables_locales_actual = 0;
         pos_variable_local_actual = 1;
-        yylval.atributos.num_parametros = num_parametros_actual;
-        yylval.atributos.num_variables_locales = num_variables_locales;
-        TablaSimbolos_declarar_global(tabla_simbolos, yylval.atributos.lexema, &atributos);
-        TablaSimbolos_declarar_local(tabla_simbolos, yylval.atributos.lexema, &atributos);
-        strcpy($$.lexema, yylval.atributos.lexema);
+
+        strcpy(atributos_actuales.lexema, $3.lexema);
+        atributos_actuales.clase = FUNCION;
+        atributos_actuales.tipo = $2.tipo;
+
+        TablaSimbolos_declarar_global(tabla_simbolos, $3.lexema, &atributos_actuales);
+        TablaSimbolos_declarar_local(tabla_simbolos, $3.lexema, &atributos_actuales);
+
+        strcpy($$.lexema, $3.lexema);
     };
 
-fn_declaration: 
+fn_declaration:
     fn_name TOK_PARENTESISIZQUIERDO parametro_funcion TOK_PARENTESISDERECHO TOK_CORCHETEIZQUIERDO declaraciones_funcion {
         TablaSimbolos_uso_global(tabla_simbolos, $1.lexema)->num_parametros = num_parametros_actual;
         TablaSimbolos_uso_local(tabla_simbolos, $1.lexema)->num_parametros = num_parametros_actual;
@@ -176,7 +191,7 @@ funcion:
         TablaSimbolos_uso_local(tabla_simbolos, $1.lexema)->num_variables_locales = num_variables_locales_actual;
     };
 
-parametros_funcion: 
+parametros_funcion:
     parametro_funcion resto_parametros_funcion
     { fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametros_funcion> <resto_parametros_funcion>\n"); } |
     /* lambda */ 
@@ -188,7 +203,7 @@ resto_parametros_funcion:
     /* lambda */ 
     { fprintf(yyout, ";R26:\t<resto_parametros_funcion> ::=\n"); };
 
-parametro_funcion: 
+parametro_funcion:
     tipo idpf
     { fprintf(yyout, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n"); };
 
@@ -198,7 +213,7 @@ declaraciones_funcion:
     /* lambda */ 
     { fprintf(yyout, ";R29:\t<declaraciones_funcion> ::=\n"); };
 
-sentencias: 
+sentencias:
     sentencia 
     { fprintf(yyout, ";R30:\t<sentencias> ::= <sentencia>\n"); } |
     sentencia sentencias
@@ -226,15 +241,41 @@ bloque:
     bucle
     { fprintf(yyout, ";R41:\t<bloque> ::= <bucle>\n"); };
 
-asignacion: 
-    identificador TOK_ASIGNACION exp 
-    { fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n"); } |
+asignacion:
+    TOK_IDENTIFICADOR TOK_ASIGNACION exp { 
+        if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
+            printf("ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        atributos_actuales = (local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
+        if (atributos_actuales.tipo == FUNCION) {
+            printf("ERROR: El identificador %s corresponde a una función, por lo que no es asignable.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        } else if (atributos_actuales.tipo == VECTOR) {
+            printf("ERROR: El identificador %s corresponde a un vector, por lo que no es asignable.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        /* GENERACIÓN DE CÓDIGO ASIGNACIÓN */
+    } |
     elemento_vector TOK_ASIGNACION exp
     { fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n"); };
 
-elemento_vector: 
-    identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
-    { fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n"); };
+elemento_vector:
+    TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {
+        if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
+            printf("ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        atributos_actuales = (local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
+        if (atributos_actuales.tipo == FUNCION) {
+            printf("ERROR: El identificador %s corresponde a una función, por lo que no es indexable.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        } else if (atributos_actuales.tipo == ESCALAR) {
+            printf("ERROR: El identificador %s corresponde a un escalar, por lo que no es indexable.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        /* GENERACIÓN DE CÓDIGO APILAR ELEMENTO (?) */
+    };
 
 condicional:
     TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
@@ -242,55 +283,211 @@ condicional:
     TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
     { fprintf(yyout, ";RMAX_LONGITUD_ID+1:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n"); };
 
-bucle: 
+bucle:
     TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
     { fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n"); };
 
-lectura: 
-    TOK_SCANF identificador
-    { fprintf(yyout, ";R54:\t<lectura> ::= scanf <identificador>\n"); };
+lectura:
+    TOK_SCANF TOK_IDENTIFICADOR {
+        if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
+            printf("ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        atributos_actuales = (local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
+        if (atributos_actuales.tipo == FUNCION) {
+            printf("ERROR: El identificador %s corresponde a una función, pero scanf recibe como argumento un escalar.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        } else if (atributos_actuales.tipo == VECTOR) {
+            printf("ERROR: El identificador %s corresponde a un vector, pero scanf recibe como argumento un escalar.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        /* GENERACIÓN DE CÓDIGO LECTURA */
+    };
 
-escritura: 
+escritura:
     TOK_PRINTF exp
     { fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n"); };
 
-retorno_funcion: 
+retorno_funcion:
     TOK_RETURN exp
     { fprintf(yyout, ";R61:\t<retorno_funcion> ::= return <exp>\n"); };
 
-exp: 
-    exp TOK_MAS exp 
-    { fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n"); } |
-    exp TOK_MENOS exp 
-    { fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n"); } |
-    exp TOK_DIVISION exp 
-    { fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n"); } |
-    exp TOK_ASTERISCO exp 
-    { fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n"); } |
-    TOK_MENOS exp 
-    { fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n"); } |
-    exp TOK_AND exp 
-    { fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n"); } |
-    exp TOK_OR exp 
-    { fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n"); } |
-    TOK_NOT exp 
-    { fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n"); } |
-    identificador 
-    { fprintf(yyout, ";R80:\t<exp> ::= <identificador>\n"); } |
-    constante 
-    { fprintf(yyout, ";R81:\t<exp> ::= <constante>\n"); } |
-    TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO 
-    { fprintf(yyout, ";R82:\t<exp> ::= ( <exp> )\n"); } |
-    TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO 
-    { fprintf(yyout, ";R83:\t<exp> ::= ( <comparacion> )\n"); } |
-    elemento_vector 
-    { fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n"); } |
-    identificador TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO
-    { fprintf(yyout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n"); };
+exp:
+    exp TOK_MAS exp {
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una suma.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una suma.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = ENTERO;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_MENOS exp {
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una resta.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una resta.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = ENTERO;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_DIVISION exp {
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una división.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una división.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = ENTERO;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_ASTERISCO exp {
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una multiplicación.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una multiplicación.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = ENTERO;
+        $$.es_direccion = 0;
+    } |
+    TOK_MENOS exp {
+        if ($2.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en un cambio de signo.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = ENTERO;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_AND exp {
+        if ($1.tipo == ENTERO) {
+            printf("ERROR: la expresión %s es un entero, pero se usa en un Y lógico.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == ENTERO) {
+            printf("ERROR: la expresión %s es un entero, pero se usa en un Y lógico.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_OR exp {
+        if ($1.tipo == ENTERO) {
+            printf("ERROR: la expresión %s es un entero, pero se usa en un O lógico.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == ENTERO) {
+            printf("ERROR: la expresión %s es un entero, pero se usa en un O lógico.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    } |
+    TOK_NOT exp {
+        if ($2.tipo == ENTERO) {
+            printf("ERROR: la expresión %s es un entero, pero se usa en una negación lógica.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    } |
+    TOK_IDENTIFICADOR {
+        if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
+            printf("ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        atributos_actuales = (local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
+        if (atributos_actuales.tipo == FUNCION) {
+            printf("ERROR: El identificador %s corresponde a una función, por lo que no se puede acceder a su valor.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        } else if (atributos_actuales.tipo == VECTOR) {
+            printf("ERROR: El identificador %s corresponde a un vector, por lo que no se puede acceder a su valor.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        $$.tipo = atributos_actuales.tipo;
+        $$.es_direccion = TRUE;
+        /* GENERACIÓN DE CÓDIGO APILAR (?) */
+    } |
+    constante { 
+        $$.tipo = $1.tipo;
+        $$.es_direccion = $1.es_direccion; 
+    } |
+    TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {
+        $$.tipo = $2.tipo;
+        $$.es_direccion = $2.es_direccion; 
+    } |
+    TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO {
+        $$.tipo = $2.tipo;
+        $$.es_direccion = $2.es_direccion; 
+    } |
+    elemento_vector { 
+        $$.tipo = $1.tipo;
+        $$.es_direccion = $1.es_direccion; 
+    } |
+    idf_llamada_funcion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {
+        if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
+            printf("ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        atributos_actuales = (local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
+        if (atributos_actuales.tipo == ESCALAR) {
+            printf("ERROR: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        } else if (atributos_actuales.tipo == VECTOR) {
+            printf("ERROR: El identificador %s corresponde a un vector, por lo que no es invocable.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        /* GENERACIÓN DE CÓDIGO LLAMADA A FUNCIÓN (?) */
+        en_explist = FALSE;
+    };
+
+idf_llamada_funcion:
+    TOK_IDENTIFICADOR {
+        if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
+            printf("ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        atributos_actuales = (local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
+        if (atributos_actuales.tipo == ESCALAR) {
+            printf("ERROR: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        } else if (atributos_actuales.tipo == VECTOR) {
+            printf("ERROR: El identificador %s corresponde a un vector, por lo que no es invocable.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        if (en_explist == TRUE) {
+            printf("ERROR: Se están anidando las llamadas a función.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        num_parametro_llamada_actual = 0;
+        en_explist = TRUE;
+        $$.lexema = $1.lexema;
+    };
 
 lista_expresiones:
     exp resto_lista_expresiones
-    { fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n"); } |
+    { printf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n"); } |
     /* lambda */
     { fprintf(yyout, ";R90:\t<lista_expresiones> ::=\n"); };
 
@@ -301,64 +498,143 @@ resto_lista_expresiones:
     { fprintf(yyout, ";R92:\t<resto_lista_expresiones> ::=\n"); };
 
 comparacion:
-    exp TOK_IGUAL exp 
-    { fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n"); } |
-    exp TOK_DISTINTO exp 
-    { fprintf(yyout, ";R94:\t<comparacion> ::= <exp> != <exp>\n"); } |
-    exp TOK_MENORIGUAL exp 
-    { fprintf(yyout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n"); } |
-    exp TOK_MAYORIGUAL exp 
-    { fprintf(yyout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n"); } |
-    exp TOK_MENOR exp 
-    { fprintf(yyout, ";R97:\t<comparacion> ::= <exp> < <exp>\n"); } |
-    exp TOK_MAYOR exp
-    { fprintf(yyout, ";R98:\t<comparacion> ::= <exp> > <exp>\n"); };
+    exp TOK_IGUAL exp { 
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_DISTINTO exp { 
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_MENORIGUAL exp { 
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_MAYORIGUAL exp { 
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_MENOR exp { 
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    } |
+    exp TOK_MAYOR exp { 
+        if ($1.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            printf("ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = 0;
+    }
 
 constante:
-    constante_logica 
-    { fprintf(yyout, ";R99:\t<constante> ::= <constante_logica>\n"); } |
-    constante_entera
-    { fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n"); };
+    constante_logica { 
+        $$.tipo = $1.tipo;
+        $$.es_direccion = $1.es_direccion;
+    } |
+    constante_entera { 
+        $$.tipo = $1.tipo;
+        $$.es_direccion = $1.es_direccion;
+    };
 
 constante_logica:
-    TOK_TRUE 
-    { fprintf(yyout, ";R100:\t<constante_logica> ::= true\n"); } |
-    TOK_FALSE
-    { fprintf(yyout, ";R100:\t<constante_logica> ::= false\n"); };
+    TOK_TRUE { 
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = FALSE;
+    } |
+    TOK_FALSE { 
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = FALSE;
+    }
 
 constante_entera:
-    TOK_CONSTANTE_ENTERA
-    { fprintf(yyout, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n"); };
+    TOK_CONSTANTE_ENTERA {
+        $$.tipo = ENTERO;
+        $$.es_direccion = FALSE;
+    };
 
 identificador:
     TOK_IDENTIFICADOR {
-        strcpy(atributos.lexema, yylval.atributos.lexema);
+        strcpy(atributos_actuales.lexema, $1.lexema);
+        atributos_actuales.clase = clase_actual;
+        atributos_actuales.tipo = tipo_actual;
+
         if (local) {
-            if (TablaSimbolos_existe_local(tabla_simbolos, atributos.lexema)) {
-                printf("ERROR: Identificador %s duplicado.\n", atributos.lexema);
+            if (TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) {
+                printf("ERROR: Identificador %s duplicado.\n", $1.lexema);
                 return PARAR_COMPILADOR;
             } else {
-                TablaSimbolos_declarar_local(tabla_simbolos, atributos.lexema, &atributos);
+                TablaSimbolos_declarar_local(tabla_simbolos, $1.lexema, &atributos_actuales);
             }
         } else {
-            if (TablaSimbolos_existe_global(tabla_simbolos, atributos.lexema)) {
-                printf("ERROR: Identificador %s duplicado.\n", atributos.lexema);
+            if (TablaSimbolos_existe_global(tabla_simbolos, $1.lexema)) {
+                printf("ERROR: Identificador %s duplicado.\n", $1.lexema);
                 return PARAR_COMPILADOR;
             } else {
-                TablaSimbolos_declarar_global(tabla_simbolos, atributos.lexema, &atributos);
+                TablaSimbolos_declarar_global(tabla_simbolos, $1.lexema, &atributos_actuales);
             }
         }
     };
 
 idpf:
     TOK_IDENTIFICADOR {
-        strcpy(atributos.lexema, yylval.atributos.lexema);
-        if (TablaSimbolos_existe_local(tabla_simbolos, atributos.lexema)) {
-            printf("ERROR: Identificador %s duplicado en la declaración de la función.\n", atributos.lexema);
+        strcpy(atributos_actuales.lexema, $1.lexema);
+        if (TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) {
+            printf("ERROR: Identificador %s duplicado en la declaración de la función.\n", $1.lexema);
             return PARAR_COMPILADOR;
         }
-        atributos.posicion = pos_parametro_actual;
-        TablaSimbolos_declarar_local(tabla_simbolos, atributos.lexema, &atributos);
+        atributos_actuales.posicion = pos_parametro_actual;
+        TablaSimbolos_declarar_local(tabla_simbolos, $1.lexema, &atributos_actuales);
         pos_parametro_actual++;
         num_parametros_actual++;
     };
