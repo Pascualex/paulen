@@ -1,4 +1,4 @@
-num_tests=3
+num_tests=4
 echo Compilando los analizadores...
 sh compile.sh alfa
 echo Ejecutando tests:
