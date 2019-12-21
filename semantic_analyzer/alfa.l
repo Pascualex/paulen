@@ -69,7 +69,7 @@ LETRA [a-zA-Z]
         codigo_tok = TOK_ERROR;
         return TOK_ERROR;
     } else {
-        strcpy(yylval.atributos.lexema, yytext);
+        strcpy(lexema_identificador_actual, yytext);
         return print_and_update(TOK_IDENTIFICADOR);
     }
 }

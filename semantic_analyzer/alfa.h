@@ -2,6 +2,7 @@
 #define ALFA_H
 
 #include <stdbool.h>
+#include <string.h>
 
 #define MAX_LONGITUD_ID 50
 #define MAX_TAM_VECTOR 64
