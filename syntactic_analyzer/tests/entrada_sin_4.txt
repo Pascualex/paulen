@@ -4,7 +4,7 @@ int x;
 int y;
 int z;
 
-if (x == 2) {
+if ( x == 2 ) {
 z=x+y;
 printf $;
 }

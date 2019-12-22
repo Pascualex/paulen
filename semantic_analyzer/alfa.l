@@ -1,5 +1,7 @@
 %{
+    #include "alfa.h"
     #include "y.tab.h"
+    #include "alfa.h"
     #include <stdlib.h>
     #include <stdio.h>
     #include <stdarg.h>
@@ -64,12 +66,12 @@ LETRA [a-zA-Z]
 
     /* Identificadores */
 {LETRA}({LETRA}|{DIGITO})* {
-    if (yyleng > MAX_LEN_ID) {
+    if (yyleng > MAX_LONGITUD_ID) {
         fprintf(stderr, "Error en [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
         codigo_tok = TOK_ERROR;
         return TOK_ERROR;
     } else {
-        strcpy(lexema_identificador_actual, yytext);
+        strcpy(yylval.atributos.lexema, yytext);
         return print_and_update(TOK_IDENTIFICADOR);
     }
 }
