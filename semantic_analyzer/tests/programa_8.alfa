@@ -1,0 +1,10 @@
+// Test error división entre 0
+
+main {
+  int x, y;
+
+  x = 1;
+  y = 0;
+
+  printf x / y;
+}

@@ -1,4 +1,4 @@
-// Test vectores
+// Test entrada/salida
 
 main {
   int x, y;
@@ -6,17 +6,17 @@ main {
 
   scanf x;
   scanf y;
-  printf (x*y);
+  printf (x * y); // 100
 
   scanf x;
   scanf y;
-  printf (x-y);
+  printf (x - y); // 15
 
   scanf a;
   scanf b;
-  printf (a && b);
+  printf (a && b); // false
 
   scanf a;
   scanf b;
-  printf (a || b);
+  printf (a || b); // true
 }

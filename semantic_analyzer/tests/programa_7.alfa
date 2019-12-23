@@ -1,0 +1,13 @@
+// Test error fuera de rango
+
+main {
+  array int[4] values;
+  int x;
+
+  values[0] = 1;
+  values[1] = 2;
+  values[2] = 3;
+  values[3] = 4;
+
+  x = values[5];
+}

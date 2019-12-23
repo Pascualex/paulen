@@ -457,7 +457,11 @@ void escribir_elemento_vector(FILE *file, char *nombre_vector, int tam_max, int 
 
     fprintf(file, "cmp eax, %d\n", tam_max);
     fprintf(file, "jge fuera_de_rango\n");
-    fprintf(file, "lea eax, [_%s+4*eax]\n", nombre_vector);
+    fprintf(file, "mov dword edx, _%s\n", nombre_vector);
+    fprintf(file, "add eax, eax\n");
+    fprintf(file, "add eax, eax\n");
+    fprintf(file, "add edx, eax\n");
+    fprintf(file, "push dword edx\n");
 }
 
 void declararFuncion(FILE *file, char *nombre_funcion, int num_var_loc) {
@@ -489,9 +493,9 @@ void asignarDestinoEnPila(FILE *file, int es_variable) {
     if (file == NULL) return;
 
     cargar_registro(file, "eax", FALSE);
-    cargar_registro(file, "ecx", es_variable);
+    cargar_registro(file, "edx", es_variable);
 
-    fprintf(file, "mov dword [eax], ecx\n");
+    fprintf(file, "mov dword [eax], edx\n");
 }
 
 void retornarFuncion(FILE *file, int es_variable) {

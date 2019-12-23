@@ -1,4 +1,4 @@
-// Test vectores
+// Test bucles
 
 main {
   int x, y, z;
@@ -6,40 +6,40 @@ main {
   y = 0;
   x = 0;
   while ((x < 6)) {
-    y = y+x;
-    x = x+1;
+    y = y + x;
+    x = x + 1;
   }
 
-  printf y;
+  printf y; // 15
 
   x = 0;
   while ((y != x)) {
-    y = y-1;
+    y = y - 1;
   }
 
-  printf y;
+  printf y; // 0
 
   x = 1;
   y = 0;
   while ((x <= 5)) {
     z = 1;
     while ((z <= 5)) {
-      y = y-3;
-      z = z+1;
+      y = y - 3;
+      z = z + 1;
     }
-    x = x+1;
+    x = x + 1;
   }
 
-  printf y;
+  printf y; // -75
 
   x = 0;
   y = 0;
   z = 10;
-  while ((x+y < z)) {
+  while ((x + y < z)) {
     y = y + 2;
     x = x + 2;
     z = z + 1;
   }
 
-  printf z;
+  printf z; // 14
 }
