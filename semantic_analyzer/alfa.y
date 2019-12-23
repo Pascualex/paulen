@@ -20,6 +20,7 @@
     TablaSimbolos *tabla_simbolos;
     bool local;
     bool en_explist;
+    bool hay_ret;
     int tipo_actual;
     int clase_actual;
     int tam_vector_actual;
@@ -188,6 +189,11 @@ funcion:
     fn_declaration sentencias TOK_LLAVEDERECHA {
         TablaSimbolos_terminar_funcion(tabla_simbolos);
         local = false;
+
+        if (!hay_ret) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la función %s no tiene ningún retorno.\n", row, col, $1.lexema);
+            return PARAR_COMPILADOR;
+        }
     };
 
 fn_declaration:
@@ -209,6 +215,7 @@ fn_name:
         }
 
         local = true;
+        hay_ret = false;
         num_parametros_actual = 0;
         pos_parametro_actual = 0;
         num_variables_locales_actual = 0;
@@ -414,11 +421,7 @@ retorno_funcion:
             return PARAR_COMPILADOR;
         }
 
-        /*
-            FALTA COMPROBAR:
-                En el cuerpo de una función obligatoriamente tiene que aparecer al menos una sentencia de retorno. (?)
-        */
-
+        hay_ret = true;
         retornarFuncion(yyout, $2.es_direccion);
     };
 
