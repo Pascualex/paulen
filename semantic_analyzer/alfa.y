@@ -309,6 +309,7 @@ elemento_vector:
             fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
+
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
         if (atributos_actuales.categoria == FUNCION) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, por lo que no es indexable.\n", row, col, $1.lexema);

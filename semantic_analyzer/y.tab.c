@@ -555,11 +555,11 @@ static const yytype_uint16 yyrline[] =
      157,   160,   164,   170,   180,   181,   184,   184,   188,   194,
      205,   228,   228,   232,   232,   236,   239,   239,   243,   244,
      247,   248,   251,   252,   253,   254,   257,   258,   261,   294,
-     307,   332,   335,   340,   352,   358,   363,   374,   381,   399,
-     404,   425,   440,   455,   470,   485,   496,   511,   526,   538,
-     571,   575,   579,   583,   588,   603,   630,   632,   636,   638,
-     642,   658,   674,   690,   706,   722,   740,   744,   750,   755,
-     762,   770,   798
+     307,   333,   336,   341,   353,   359,   364,   375,   382,   400,
+     405,   426,   441,   456,   471,   486,   497,   512,   527,   539,
+     572,   576,   580,   584,   589,   604,   631,   633,   637,   639,
+     643,   659,   675,   691,   707,   723,   741,   745,   751,   756,
+     763,   771,   799
 };
 #endif
 
@@ -1629,6 +1629,7 @@ yyreduce:
             fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[-3].atributos).lexema);
             return PARAR_COMPILADOR;
         }
+
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[-3].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[-3].atributos).lexema));
         if (atributos_actuales.categoria == FUNCION) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, por lo que no es indexable.\n", row, col, (yyvsp[-3].atributos).lexema);
@@ -1647,27 +1648,27 @@ yyreduce:
 
         escribir_elemento_vector(yyout, (yyvsp[-3].atributos).lexema, atributos_actuales.numero_elementos, (yyvsp[-1].atributos).es_direccion);
     }
-#line 1651 "y.tab.c" /* yacc.c:1646  */
+#line 1652 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 332 "alfa.y" /* yacc.c:1646  */
+#line 333 "alfa.y" /* yacc.c:1646  */
     {
         ifthen_fin(yyout, (yyvsp[-3].atributos).etiqueta);
     }
-#line 1659 "y.tab.c" /* yacc.c:1646  */
+#line 1660 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 335 "alfa.y" /* yacc.c:1646  */
+#line 336 "alfa.y" /* yacc.c:1646  */
     {
         ifthen_fin(yyout, (yyvsp[-3].atributos).etiqueta);
     }
-#line 1667 "y.tab.c" /* yacc.c:1646  */
+#line 1668 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 340 "alfa.y" /* yacc.c:1646  */
+#line 341 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-1].atributos).tipo == ENTERO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un IF, debería ser una expresión booleana.\n", row, col);
@@ -1678,28 +1679,28 @@ yyreduce:
         (yyval.atributos).etiqueta = etiqueta;
         etiqueta++;
     }
-#line 1682 "y.tab.c" /* yacc.c:1646  */
+#line 1683 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 352 "alfa.y" /* yacc.c:1646  */
+#line 353 "alfa.y" /* yacc.c:1646  */
     {
         ifthenelse_fin_then(yyout, (yyvsp[-4].atributos).etiqueta);
         (yyval.atributos).etiqueta = (yyvsp[-4].atributos).etiqueta;
     }
-#line 1691 "y.tab.c" /* yacc.c:1646  */
+#line 1692 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 358 "alfa.y" /* yacc.c:1646  */
+#line 359 "alfa.y" /* yacc.c:1646  */
     {
         while_fin(yyout, (yyvsp[-3].atributos).etiqueta);
     }
-#line 1699 "y.tab.c" /* yacc.c:1646  */
+#line 1700 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 363 "alfa.y" /* yacc.c:1646  */
+#line 364 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-1].atributos).tipo == ENTERO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un WHILE, debería ser una expresión booleana.\n", row, col);
@@ -1709,21 +1710,21 @@ yyreduce:
         while_exp_pila(yyout, (yyvsp[-1].atributos).es_direccion, (yyvsp[-3].atributos).etiqueta);
         (yyval.atributos).etiqueta = (yyvsp[-3].atributos).etiqueta;
     }
-#line 1713 "y.tab.c" /* yacc.c:1646  */
+#line 1714 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 374 "alfa.y" /* yacc.c:1646  */
+#line 375 "alfa.y" /* yacc.c:1646  */
     {
         while_inicio(yyout, etiqueta);
         (yyval.atributos).etiqueta = etiqueta;
         etiqueta++;
     }
-#line 1723 "y.tab.c" /* yacc.c:1646  */
+#line 1724 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 381 "alfa.y" /* yacc.c:1646  */
+#line 382 "alfa.y" /* yacc.c:1646  */
     {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema))) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[0].atributos).lexema);
@@ -1740,19 +1741,19 @@ yyreduce:
 
         leer(yyout, (yyvsp[0].atributos).lexema, atributos_actuales.tipo);
     }
-#line 1744 "y.tab.c" /* yacc.c:1646  */
+#line 1745 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 399 "alfa.y" /* yacc.c:1646  */
+#line 400 "alfa.y" /* yacc.c:1646  */
     {
         escribir(yyout, (yyvsp[0].atributos).es_direccion, (yyvsp[0].atributos).tipo);
     }
-#line 1752 "y.tab.c" /* yacc.c:1646  */
+#line 1753 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 404 "alfa.y" /* yacc.c:1646  */
+#line 405 "alfa.y" /* yacc.c:1646  */
     { 
         if (!local) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: Se ha declarado un RETURN fuera de una función, debería estar declarado dentro de una función.\n", row, col);
@@ -1772,11 +1773,11 @@ yyreduce:
 
         retornarFuncion(yyout, (yyvsp[0].atributos).es_direccion);
     }
-#line 1776 "y.tab.c" /* yacc.c:1646  */
+#line 1777 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 425 "alfa.y" /* yacc.c:1646  */
+#line 426 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una suma.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -1792,11 +1793,11 @@ yyreduce:
 
         sumar(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
     }
-#line 1796 "y.tab.c" /* yacc.c:1646  */
+#line 1797 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 440 "alfa.y" /* yacc.c:1646  */
+#line 441 "alfa.y" /* yacc.c:1646  */
     { 
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una resta.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -1812,11 +1813,11 @@ yyreduce:
 
         restar(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
     }
-#line 1816 "y.tab.c" /* yacc.c:1646  */
+#line 1817 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 455 "alfa.y" /* yacc.c:1646  */
+#line 456 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una división.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -1832,11 +1833,11 @@ yyreduce:
 
         dividir(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
     }
-#line 1836 "y.tab.c" /* yacc.c:1646  */
+#line 1837 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 470 "alfa.y" /* yacc.c:1646  */
+#line 471 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una multiplicación.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -1852,11 +1853,11 @@ yyreduce:
 
         multiplicar(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
     }
-#line 1856 "y.tab.c" /* yacc.c:1646  */
+#line 1857 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 485 "alfa.y" /* yacc.c:1646  */
+#line 486 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[0].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en un cambio de signo.\n", row, col, (yyvsp[0].atributos).lexema);
@@ -1868,11 +1869,11 @@ yyreduce:
 
         cambiar_signo(yyout, (yyvsp[0].atributos).es_direccion);
     }
-#line 1872 "y.tab.c" /* yacc.c:1646  */
+#line 1873 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 496 "alfa.y" /* yacc.c:1646  */
+#line 497 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-2].atributos).tipo == ENTERO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un Y lógico.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -1888,11 +1889,11 @@ yyreduce:
 
         y(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
     }
-#line 1892 "y.tab.c" /* yacc.c:1646  */
+#line 1893 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 511 "alfa.y" /* yacc.c:1646  */
+#line 512 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[-2].atributos).tipo == ENTERO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un O lógico.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -1908,11 +1909,11 @@ yyreduce:
 
         o(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
     }
-#line 1912 "y.tab.c" /* yacc.c:1646  */
+#line 1913 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 526 "alfa.y" /* yacc.c:1646  */
+#line 527 "alfa.y" /* yacc.c:1646  */
     {
         if ((yyvsp[0].atributos).tipo == ENTERO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en una negación lógica.\n", row, col, (yyvsp[0].atributos).lexema);
@@ -1925,11 +1926,11 @@ yyreduce:
         no(yyout, (yyvsp[0].atributos).es_direccion, etiqueta);
         etiqueta++;
     }
-#line 1929 "y.tab.c" /* yacc.c:1646  */
+#line 1930 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 538 "alfa.y" /* yacc.c:1646  */
+#line 539 "alfa.y" /* yacc.c:1646  */
     {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema))) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[0].atributos).lexema);
@@ -1963,48 +1964,48 @@ yyreduce:
             (yyval.atributos).es_direccion = FALSE;
         }
     }
-#line 1967 "y.tab.c" /* yacc.c:1646  */
+#line 1968 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 571 "alfa.y" /* yacc.c:1646  */
+#line 572 "alfa.y" /* yacc.c:1646  */
     { 
         (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion; 
     }
-#line 1976 "y.tab.c" /* yacc.c:1646  */
+#line 1977 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 575 "alfa.y" /* yacc.c:1646  */
+#line 576 "alfa.y" /* yacc.c:1646  */
     {
         (yyval.atributos).tipo = (yyvsp[-1].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[-1].atributos).es_direccion; 
     }
-#line 1985 "y.tab.c" /* yacc.c:1646  */
+#line 1986 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 579 "alfa.y" /* yacc.c:1646  */
+#line 580 "alfa.y" /* yacc.c:1646  */
     {
         (yyval.atributos).tipo = (yyvsp[-1].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[-1].atributos).es_direccion; 
     }
-#line 1994 "y.tab.c" /* yacc.c:1646  */
+#line 1995 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 583 "alfa.y" /* yacc.c:1646  */
+#line 584 "alfa.y" /* yacc.c:1646  */
     { 
         (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion; 
         if (en_explist) operandoEnPilaAArgumento(yyout, TRUE);
     }
-#line 2004 "y.tab.c" /* yacc.c:1646  */
+#line 2005 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 588 "alfa.y" /* yacc.c:1646  */
+#line 589 "alfa.y" /* yacc.c:1646  */
     {
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[-3].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[-3].atributos).lexema));
         if (num_parametros_llamada_actual != atributos_actuales.num_parametros) {
@@ -2018,11 +2019,11 @@ yyreduce:
 
         llamarFuncion(yyout, (yyvsp[-3].atributos).lexema, atributos_actuales.num_parametros);
     }
-#line 2022 "y.tab.c" /* yacc.c:1646  */
+#line 2023 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 603 "alfa.y" /* yacc.c:1646  */
+#line 604 "alfa.y" /* yacc.c:1646  */
     {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema))) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[0].atributos).lexema);
@@ -2048,27 +2049,27 @@ yyreduce:
         en_explist = TRUE;
         strcpy((yyval.atributos).lexema, (yyvsp[0].atributos).lexema);
     }
-#line 2052 "y.tab.c" /* yacc.c:1646  */
+#line 2053 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 630 "alfa.y" /* yacc.c:1646  */
+#line 631 "alfa.y" /* yacc.c:1646  */
     {
         num_parametros_llamada_actual++;
     }
-#line 2060 "y.tab.c" /* yacc.c:1646  */
+#line 2061 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 636 "alfa.y" /* yacc.c:1646  */
+#line 637 "alfa.y" /* yacc.c:1646  */
     {
         num_parametros_llamada_actual++;
     }
-#line 2068 "y.tab.c" /* yacc.c:1646  */
+#line 2069 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 642 "alfa.y" /* yacc.c:1646  */
+#line 643 "alfa.y" /* yacc.c:1646  */
     { 
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -2085,11 +2086,11 @@ yyreduce:
         igual(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
         etiqueta++;
     }
-#line 2089 "y.tab.c" /* yacc.c:1646  */
+#line 2090 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 658 "alfa.y" /* yacc.c:1646  */
+#line 659 "alfa.y" /* yacc.c:1646  */
     { 
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -2106,11 +2107,11 @@ yyreduce:
         distinto(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
         etiqueta++;
     }
-#line 2110 "y.tab.c" /* yacc.c:1646  */
+#line 2111 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 674 "alfa.y" /* yacc.c:1646  */
+#line 675 "alfa.y" /* yacc.c:1646  */
     { 
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -2127,11 +2128,11 @@ yyreduce:
         menor_igual(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
         etiqueta++;
     }
-#line 2131 "y.tab.c" /* yacc.c:1646  */
+#line 2132 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 690 "alfa.y" /* yacc.c:1646  */
+#line 691 "alfa.y" /* yacc.c:1646  */
     { 
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -2148,11 +2149,11 @@ yyreduce:
         mayor_igual(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
         etiqueta++;
     }
-#line 2152 "y.tab.c" /* yacc.c:1646  */
+#line 2153 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 706 "alfa.y" /* yacc.c:1646  */
+#line 707 "alfa.y" /* yacc.c:1646  */
     { 
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -2169,11 +2170,11 @@ yyreduce:
         menor(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
         etiqueta++;
     }
-#line 2173 "y.tab.c" /* yacc.c:1646  */
+#line 2174 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 722 "alfa.y" /* yacc.c:1646  */
+#line 723 "alfa.y" /* yacc.c:1646  */
     { 
         if ((yyvsp[-2].atributos).tipo == BOOLEANO) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
@@ -2190,60 +2191,60 @@ yyreduce:
         mayor(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
         etiqueta++;
     }
-#line 2194 "y.tab.c" /* yacc.c:1646  */
+#line 2195 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 740 "alfa.y" /* yacc.c:1646  */
+#line 741 "alfa.y" /* yacc.c:1646  */
     { 
         (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion;
     }
-#line 2203 "y.tab.c" /* yacc.c:1646  */
+#line 2204 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 744 "alfa.y" /* yacc.c:1646  */
+#line 745 "alfa.y" /* yacc.c:1646  */
     { 
         (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion;
     }
-#line 2212 "y.tab.c" /* yacc.c:1646  */
+#line 2213 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 750 "alfa.y" /* yacc.c:1646  */
+#line 751 "alfa.y" /* yacc.c:1646  */
     { 
         (yyval.atributos).tipo = BOOLEANO;
         (yyval.atributos).es_direccion = FALSE;
         escribir_operando(yyout, "1", false);
     }
-#line 2222 "y.tab.c" /* yacc.c:1646  */
+#line 2223 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 755 "alfa.y" /* yacc.c:1646  */
+#line 756 "alfa.y" /* yacc.c:1646  */
     { 
         (yyval.atributos).tipo = BOOLEANO;
         (yyval.atributos).es_direccion = FALSE;
         escribir_operando(yyout, "0", false);
     }
-#line 2232 "y.tab.c" /* yacc.c:1646  */
+#line 2233 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 762 "alfa.y" /* yacc.c:1646  */
+#line 763 "alfa.y" /* yacc.c:1646  */
     {
         (yyval.atributos).tipo = ENTERO;
         (yyval.atributos).es_direccion = FALSE;
         sprintf(atributos_actuales.lexema, "%d", (yyvsp[0].atributos).valor_entero);
         escribir_operando(yyout, atributos_actuales.lexema, false);
     }
-#line 2243 "y.tab.c" /* yacc.c:1646  */
+#line 2244 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 770 "alfa.y" /* yacc.c:1646  */
+#line 771 "alfa.y" /* yacc.c:1646  */
     {
         strcpy(atributos_actuales.lexema, (yyvsp[0].atributos).lexema);
         atributos_actuales.categoria = VARIABLE;
@@ -2270,11 +2271,11 @@ yyreduce:
             }
         }
     }
-#line 2274 "y.tab.c" /* yacc.c:1646  */
+#line 2275 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 798 "alfa.y" /* yacc.c:1646  */
+#line 799 "alfa.y" /* yacc.c:1646  */
     {
         strcpy(atributos_actuales.lexema, (yyvsp[0].atributos).lexema);
         if (TablaSimbolos_existe_local_estricto(tabla_simbolos, (yyvsp[0].atributos).lexema)) {
@@ -2289,11 +2290,11 @@ yyreduce:
         pos_parametro_actual++;
         num_parametros_actual++;
     }
-#line 2293 "y.tab.c" /* yacc.c:1646  */
+#line 2294 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2297 "y.tab.c" /* yacc.c:1646  */
+#line 2298 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2521,7 +2522,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 813 "alfa.y" /* yacc.c:1906  */
+#line 814 "alfa.y" /* yacc.c:1906  */
 
 
 int main(int argc, char **argv) {
