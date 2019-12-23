@@ -65,8 +65,9 @@
 #line 1 "alfa.y" /* yacc.c:339  */
 
     #include "alfa.h"
-    #include "y.tab.h"
+    #include "generacion.h"
     #include "TablaSimbolos.h"
+    #include "y.tab.h"
     #include <stdlib.h>
     #include <stdio.h>
     #include <stdarg.h>
@@ -96,10 +97,12 @@
     int num_variables_locales_actual;
     
     tipo_atributos atributos_actuales;
+
+    int etiqueta = 1;
     
     int yyerror(char *s);
 
-#line 103 "y.tab.c" /* yacc.c:339  */
+#line 106 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -128,6 +131,12 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 41 "alfa.y" /* yacc.c:355  */
+
+    #include "alfa.h"
+
+#line 140 "y.tab.c" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -219,11 +228,11 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 38 "alfa.y" /* yacc.c:355  */
+#line 45 "alfa.y" /* yacc.c:355  */
 
     tipo_atributos atributos;
 
-#line 227 "y.tab.c" /* yacc.c:355  */
+#line 236 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -240,7 +249,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 244 "y.tab.c" /* yacc.c:358  */
+#line 253 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -482,16 +491,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   149
+#define YYLAST   156
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  41
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  38
+#define YYNNTS  44
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  74
+#define YYNRULES  82
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  142
+#define YYNSTATES  154
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -541,14 +550,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   112,   112,   115,   116,   119,   122,   124,   128,   131,
-     135,   141,   150,   151,   154,   154,   158,   182,   189,   204,
-     207,   207,   211,   212,   215,   216,   219,   220,   221,   222,
-     225,   226,   229,   251,   264,   288,   296,   297,   300,   308,
-     311,   328,   331,   350,   363,   376,   389,   402,   411,   424,
-     437,   446,   464,   468,   472,   476,   480,   500,   525,   527,
-     531,   533,   537,   550,   563,   576,   589,   602,   617,   621,
-     627,   631,   637,   643,   666
+       0,   122,   122,   127,   134,   139,   140,   143,   146,   148,
+     152,   155,   159,   165,   174,   175,   178,   178,   182,   206,
+     213,   220,   220,   224,   224,   228,   231,   231,   235,   236,
+     239,   240,   243,   244,   245,   246,   249,   250,   253,   275,
+     288,   313,   316,   321,   333,   339,   351,   359,   362,   380,
+     385,   404,   419,   434,   449,   464,   475,   490,   505,   517,
+     536,   540,   544,   548,   552,   572,   597,   599,   603,   605,
+     609,   625,   641,   657,   673,   689,   707,   711,   717,   722,
+     729,   737,   760
 };
 #endif
 
@@ -567,15 +577,17 @@ static const char *const yytname[] =
   "TOK_IGUAL", "TOK_DISTINTO", "TOK_MENORIGUAL", "TOK_MAYORIGUAL",
   "TOK_MENOR", "TOK_MAYOR", "TOK_IDENTIFICADOR", "TOK_CONSTANTE_ENTERA",
   "TOK_TRUE", "TOK_FALSE", "TOK_ERROR", "$accept", "programa",
-  "declaraciones", "declaracion", "clase", "clase_escalar", "tipo",
-  "clase_vector", "identificadores", "funciones", "fn_name",
-  "fn_declaration", "funcion", "parametro_funcion",
+  "escritura_TS", "escritura_main", "declaraciones", "declaracion",
+  "clase", "clase_escalar", "tipo", "clase_vector", "identificadores",
+  "funciones", "fn_name", "fn_declaration", "funcion",
+  "parametros_funcion", "resto_parametros_funcion", "parametro_funcion",
   "declaraciones_funcion", "sentencias", "sentencia", "sentencia_simple",
-  "bloque", "asignacion", "elemento_vector", "if_exp", "condicional",
-  "while_exp", "bucle", "lectura", "escritura", "retorno_funcion", "exp",
-  "idf_llamada_funcion", "lista_expresiones", "resto_lista_expresiones",
-  "comparacion", "constante", "constante_logica", "constante_entera",
-  "identificador", "idpf", YY_NULLPTR
+  "bloque", "asignacion", "elemento_vector", "condicional", "if_exp",
+  "if_else_then_else_exp", "if_else_then_exp", "while_exp", "bucle",
+  "lectura", "escritura", "retorno_funcion", "exp", "idf_llamada_funcion",
+  "lista_expresiones", "resto_lista_expresiones", "comparacion",
+  "constante", "constante_logica", "constante_entera", "identificador",
+  "idpf", YY_NULLPTR
 };
 #endif
 
@@ -592,12 +604,12 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -26
+#define YYPACT_NINF -37
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-26)))
+  (!!((Yystate) == (-37)))
 
-#define YYTABLE_NINF -58
+#define YYTABLE_NINF -66
 
 #define yytable_value_is_error(Yytable_value) \
   0
@@ -606,21 +618,22 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      15,     6,    43,    31,   -26,   -26,   -26,    35,    45,    31,
-      17,   -26,   -26,   -26,    40,    35,     2,    60,     2,    45,
-     -26,   -26,    63,    64,    41,    44,    72,    73,    54,    18,
-      18,    11,    71,     2,    77,   -26,   -26,    91,    94,   -26,
-      95,   -26,   -26,   -26,   -26,    35,    98,   -26,   -26,    17,
-      99,   -26,    18,    18,   -26,    18,    18,    18,    30,   -26,
-     -26,   -26,   -26,    47,   104,   -26,   -26,   -26,    47,    18,
-      18,   -26,   -26,   -26,    18,     2,     2,    85,   106,   -26,
-     -26,   -26,   102,   114,    70,   115,    25,   -17,    18,    18,
-      18,    18,    18,    18,    18,    -3,    47,    47,   112,   113,
-     -26,   -26,   117,   -26,   -26,   -26,    18,    18,    18,    18,
-      18,    18,   -26,    25,    25,   -26,   -26,   -17,   -17,    84,
-     119,   -26,   134,   -26,    31,    47,    47,    47,    47,    47,
-      47,    18,   -26,   -26,   124,   -26,   -26,    84,     2,   -26,
-     125,   -26
+       3,    -3,    33,    18,   -37,   -37,   -37,     5,   -37,    18,
+       2,   -37,   -37,   -37,    21,    34,   -37,   -37,    30,    31,
+       8,     5,   -37,    38,    24,    34,   -37,     2,    36,    26,
+      24,     5,    45,    47,    35,    65,    65,   -14,    57,    24,
+      63,   -37,   -37,    56,   -37,    59,    60,    62,    70,   -37,
+     -37,   -37,   -37,   -37,   -37,   -37,   -37,    84,    73,    76,
+      94,    65,    65,   -37,    65,    65,    65,   -13,   -37,   -37,
+     -37,   -37,   127,    95,   -37,   -37,   -37,   127,    65,    65,
+     -37,   -37,   -37,    65,    24,    24,    24,    24,   -37,   -37,
+     -37,    92,     5,   -37,   109,   121,    90,   102,    -6,   -10,
+      65,    65,    65,    65,    65,    65,    65,    72,   127,   127,
+     106,   107,   108,   110,    18,    94,   -37,   -37,   -37,    65,
+      65,    65,    65,    65,    65,   -37,    -6,    -6,   -37,   -37,
+     -10,   -10,    25,   113,   -37,   -37,   -37,   130,   -37,   -37,
+     -37,   -37,   127,   127,   127,   127,   127,   127,    65,   -37,
+     -37,   -37,    25,   -37
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -628,39 +641,42 @@ static const yytype_int16 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     1,     9,    10,     0,    15,     3,
-       0,     6,     8,     7,     0,     0,     0,     0,     0,    15,
-       4,    73,     0,    12,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    22,     0,    25,    26,     0,     0,    30,
-       0,    31,    27,    28,    29,     0,     0,    14,     5,     0,
-       0,    16,     0,     0,    40,     0,     0,     0,    51,    72,
-      70,    71,    55,    41,     0,    52,    68,    69,    42,     0,
-       0,     2,    23,    24,     0,     0,     0,     0,     0,    18,
-      13,    11,     0,     0,     0,     0,    47,    50,     0,     0,
-       0,     0,     0,     0,    59,     0,    32,    33,     0,     0,
-      74,    19,     0,    35,    38,    53,     0,     0,     0,     0,
-       0,     0,    54,    43,    44,    45,    46,    48,    49,    61,
-       0,    34,    36,    39,    21,    62,    63,    64,    65,    66,
-      67,     0,    58,    56,     0,    20,    17,    61,     0,    60,
-       0,    37
+       0,     0,     0,     0,     1,    11,    12,     0,     3,     5,
+       0,     8,    10,     9,     0,    17,     6,    81,     0,    14,
+       0,     0,     4,     0,     0,    17,     7,     0,     0,     0,
+       0,    22,     0,     0,     0,     0,     0,     0,     0,    28,
+       0,    31,    32,     0,    36,     0,     0,     0,     0,    37,
+      33,    34,    35,    16,    15,    13,    18,     0,     0,     0,
+      24,     0,     0,    48,     0,     0,     0,    59,    80,    78,
+      79,    63,    49,     0,    60,    76,    77,    50,     0,     0,
+      20,    29,    30,     0,     0,     0,     0,     0,     2,    82,
+      25,     0,     0,    21,     0,     0,     0,     0,    55,    58,
+       0,     0,     0,     0,     0,     0,    67,     0,    38,    39,
+       0,     0,     0,     0,    27,    24,    43,    46,    61,     0,
+       0,     0,     0,     0,     0,    62,    51,    52,    53,    54,
+      56,    57,    69,     0,    40,    41,    42,     0,    47,    26,
+      19,    23,    70,    71,    72,    73,    74,    75,     0,    66,
+      64,    44,    69,    68
 };
 
   /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int16 yypgoto[] =
+static const yytype_int8 yypgoto[] =
 {
-     -26,   -26,    -8,   -26,   -26,   -26,    -4,   -26,    96,   128,
-     -26,   -26,   -26,   -26,   -26,   -14,   -26,   -26,   -26,   -26,
-     -16,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -25,   -26,
-     -26,    12,   -26,   -26,   -26,   -26,   -26,   -26
+     -37,   -37,   -37,   -37,    -8,   -37,   -37,   -37,     0,   -37,
+     114,   115,   -37,   -37,   -37,   -37,    27,    51,   -37,   -28,
+     -37,   -37,   -37,   -37,   -12,   -37,   -37,   -37,   -37,   -37,
+     -37,   -37,   -37,   -37,   -36,   -37,   -37,     4,   -37,   -37,
+     -37,   -37,   -37,   -37
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
-      -1,     2,     8,     9,    10,    11,    12,    13,    22,    16,
-      17,    18,    19,    78,   136,    32,    33,    34,    35,    36,
-      62,    38,    39,    40,    41,    42,    43,    44,    63,    64,
-     120,   132,    85,    65,    66,    67,    23,   101
+      -1,     2,    15,    30,     8,     9,    10,    11,    12,    13,
+      18,    22,    23,    24,    25,    59,    93,    60,   140,    38,
+      39,    40,    41,    42,    71,    44,    45,    46,    47,    48,
+      49,    50,    51,    52,    72,    73,   133,   149,    97,    74,
+      75,    76,    19,    90
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -668,87 +684,92 @@ static const yytype_int16 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      37,    20,    37,    14,    46,    68,    88,    89,    90,    91,
-      26,    25,    27,    28,    29,    30,   121,    37,     1,    72,
-      88,    89,    90,    91,    92,    93,     3,    82,    83,    69,
-      84,    86,    87,    70,    55,     5,     6,     7,    31,     5,
-       6,    77,    56,     4,    95,    96,   -57,    57,    69,    97,
-      90,    91,    15,    21,    58,    59,    60,    61,    24,    37,
-      37,    98,    99,   113,   114,   115,   116,   117,   118,   119,
-      88,    89,    90,    91,    92,    93,    45,    48,    50,    49,
-      51,   125,   126,   127,   128,   129,   130,   105,    52,    53,
-      54,    73,    71,    88,    89,    90,    91,    92,    93,   131,
-     106,   107,   108,   109,   110,   111,   137,    88,    89,    90,
-      91,    92,    93,    74,    75,    76,   135,    79,    81,   103,
-      94,   100,    37,   102,   140,    88,    89,    90,    91,    92,
-      93,   104,   112,   122,   123,   124,   133,    88,    89,    90,
-      91,    92,    93,   134,   138,    80,   141,    47,     0,   139
+      77,    16,    57,   -65,    78,    78,     1,    14,    79,     5,
+       6,    81,    43,   100,   101,   102,   103,     3,    43,   102,
+     103,    29,     5,     6,     7,    94,    95,    43,    96,    98,
+      99,    58,    32,     4,    33,    34,    35,    36,    17,    20,
+     148,    21,   107,   108,    26,    28,    27,   109,   100,   101,
+     102,   103,   104,   105,    31,    55,   110,   111,   112,   113,
+      37,    61,    56,    62,   126,   127,   128,   129,   130,   131,
+     132,    63,    43,    43,    43,    43,    80,    82,    83,    84,
+      85,    64,    86,   142,   143,   144,   145,   146,   147,    65,
+      87,   134,    58,    91,    66,   100,   101,   102,   103,   104,
+     105,    67,    68,    69,    70,    88,   139,   118,    92,    89,
+     114,   106,   152,   100,   101,   102,   103,   104,   105,   125,
+     119,   120,   121,   122,   123,   124,   116,   135,   136,   137,
+     150,   138,   100,   101,   102,   103,   104,   105,   117,   151,
+      53,    54,   141,   115,   100,   101,   102,   103,   104,   105,
+     100,   101,   102,   103,   104,   105,   153
 };
 
-static const yytype_int16 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-      16,     9,    18,     7,    18,    30,    23,    24,    25,    26,
-       8,    15,    10,    11,    12,    13,    19,    33,     3,    33,
-      23,    24,    25,    26,    27,    28,    20,    52,    53,    18,
-      55,    56,    57,    22,    16,     4,     5,     6,    36,     4,
-       5,    45,    24,     0,    69,    70,    16,    29,    18,    74,
-      25,    26,     7,    36,    36,    37,    38,    39,    18,    75,
-      76,    75,    76,    88,    89,    90,    91,    92,    93,    94,
-      23,    24,    25,    26,    27,    28,    16,    14,    37,    15,
-      36,   106,   107,   108,   109,   110,   111,    17,    16,    16,
-      36,    14,    21,    23,    24,    25,    26,    27,    28,    15,
-      30,    31,    32,    33,    34,    35,   131,    23,    24,    25,
-      26,    27,    28,    22,    20,    20,   124,    19,    19,    17,
-      16,    36,   138,    17,   138,    23,    24,    25,    26,    27,
-      28,    17,    17,    21,    21,    18,    17,    23,    24,    25,
-      26,    27,    28,     9,    20,    49,    21,    19,    -1,   137
+      36,     9,    30,    16,    18,    18,     3,     7,    22,     4,
+       5,    39,    24,    23,    24,    25,    26,    20,    30,    25,
+      26,    21,     4,     5,     6,    61,    62,    39,    64,    65,
+      66,    31,     8,     0,    10,    11,    12,    13,    36,    18,
+      15,     7,    78,    79,    14,    37,    15,    83,    23,    24,
+      25,    26,    27,    28,    16,    19,    84,    85,    86,    87,
+      36,    16,    36,    16,   100,   101,   102,   103,   104,   105,
+     106,    36,    84,    85,    86,    87,    19,    14,    22,    20,
+      20,    16,    20,   119,   120,   121,   122,   123,   124,    24,
+      20,    19,    92,    17,    29,    23,    24,    25,    26,    27,
+      28,    36,    37,    38,    39,    21,   114,    17,    14,    36,
+      18,    16,   148,    23,    24,    25,    26,    27,    28,    17,
+      30,    31,    32,    33,    34,    35,    17,    21,    21,    21,
+      17,    21,    23,    24,    25,    26,    27,    28,    17,     9,
+      25,    27,   115,    92,    23,    24,    25,    26,    27,    28,
+      23,    24,    25,    26,    27,    28,   152
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,    42,    20,     0,     4,     5,     6,    43,    44,
-      45,    46,    47,    48,    47,     7,    50,    51,    52,    53,
-      43,    36,    49,    77,    18,    47,     8,    10,    11,    12,
-      13,    36,    56,    57,    58,    59,    60,    61,    62,    63,
-      64,    65,    66,    67,    68,    16,    56,    50,    14,    15,
-      37,    36,    16,    16,    36,    16,    24,    29,    36,    37,
-      38,    39,    61,    69,    70,    74,    75,    76,    69,    18,
-      22,    21,    56,    14,    22,    20,    20,    47,    54,    19,
-      49,    19,    69,    69,    69,    73,    69,    69,    23,    24,
-      25,    26,    27,    28,    16,    69,    69,    69,    56,    56,
-      36,    78,    17,    17,    17,    17,    30,    31,    32,    33,
-      34,    35,    17,    69,    69,    69,    69,    69,    69,    69,
-      71,    19,    21,    21,    18,    69,    69,    69,    69,    69,
-      69,    15,    72,    17,     9,    43,    55,    69,    20,    72,
-      56,    21
+       0,     3,    42,    20,     0,     4,     5,     6,    45,    46,
+      47,    48,    49,    50,    49,    43,    45,    36,    51,    83,
+      18,     7,    52,    53,    54,    55,    14,    15,    37,    49,
+      44,    16,     8,    10,    11,    12,    13,    36,    60,    61,
+      62,    63,    64,    65,    66,    67,    68,    69,    70,    71,
+      72,    73,    74,    52,    51,    19,    36,    60,    49,    56,
+      58,    16,    16,    36,    16,    24,    29,    36,    37,    38,
+      39,    65,    75,    76,    80,    81,    82,    75,    18,    22,
+      19,    60,    14,    22,    20,    20,    20,    20,    21,    36,
+      84,    17,    14,    57,    75,    75,    75,    79,    75,    75,
+      23,    24,    25,    26,    27,    28,    16,    75,    75,    75,
+      60,    60,    60,    60,    18,    58,    17,    17,    17,    30,
+      31,    32,    33,    34,    35,    17,    75,    75,    75,    75,
+      75,    75,    75,    77,    19,    21,    21,    21,    21,    45,
+      59,    57,    75,    75,    75,    75,    75,    75,    15,    78,
+      17,     9,    75,    78
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    41,    42,    43,    43,    44,    45,    45,    46,    47,
-      47,    48,    49,    49,    50,    50,    51,    52,    53,    54,
-      55,    55,    56,    56,    57,    57,    58,    58,    58,    58,
-      59,    59,    60,    60,    61,    62,    63,    63,    64,    65,
-      66,    67,    68,    69,    69,    69,    69,    69,    69,    69,
-      69,    69,    69,    69,    69,    69,    69,    70,    71,    71,
-      72,    72,    73,    73,    73,    73,    73,    73,    74,    74,
-      75,    75,    76,    77,    78
+       0,    41,    42,    43,    44,    45,    45,    46,    47,    47,
+      48,    49,    49,    50,    51,    51,    52,    52,    53,    54,
+      55,    56,    56,    57,    57,    58,    59,    59,    60,    60,
+      61,    61,    62,    62,    62,    62,    63,    63,    64,    64,
+      65,    66,    66,    67,    68,    69,    70,    71,    72,    73,
+      74,    75,    75,    75,    75,    75,    75,    75,    75,    75,
+      75,    75,    75,    75,    75,    76,    77,    77,    78,    78,
+      79,    79,    79,    79,    79,    79,    80,    80,    81,    81,
+      82,    83,    84
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     6,     1,     2,     3,     1,     1,     1,     1,
-       1,     5,     1,     3,     2,     0,     3,     6,     3,     2,
-       1,     0,     1,     2,     2,     1,     1,     1,     1,     1,
-       1,     1,     3,     3,     4,     4,     4,     8,     4,     4,
-       2,     2,     2,     3,     3,     3,     3,     2,     3,     3,
-       2,     1,     1,     3,     3,     1,     4,     1,     2,     0,
-       3,     0,     3,     3,     3,     3,     3,     3,     1,     1,
-       1,     1,     1,     1,     1
+       0,     2,     8,     0,     0,     1,     2,     3,     1,     1,
+       1,     1,     1,     5,     1,     3,     2,     0,     3,     6,
+       3,     2,     0,     3,     0,     2,     1,     0,     1,     2,
+       2,     1,     1,     1,     1,     1,     1,     1,     3,     3,
+       4,     4,     4,     4,     5,     4,     4,     4,     2,     2,
+       2,     3,     3,     3,     3,     2,     3,     3,     2,     1,
+       1,     3,     3,     1,     4,     1,     2,     0,     3,     0,
+       3,     3,     3,     3,     3,     3,     1,     1,     1,     1,
+       1,     1,     1
 };
 
 
@@ -1424,53 +1445,91 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 6:
-#line 123 "alfa.y" /* yacc.c:1646  */
-    { clase_actual = ESCALAR; }
-#line 1431 "y.tab.c" /* yacc.c:1646  */
+        case 2:
+#line 122 "alfa.y" /* yacc.c:1646  */
+    {
+        escribir_fin(yyout);
+    }
+#line 1454 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 7:
-#line 125 "alfa.y" /* yacc.c:1646  */
-    { clase_actual = VECTOR; }
-#line 1437 "y.tab.c" /* yacc.c:1646  */
+  case 3:
+#line 127 "alfa.y" /* yacc.c:1646  */
+    {
+        escribir_cabecera_bss(yyout, tabla_simbolos);
+        escribir_subseccion_data(yyout);
+        escribir_segmento_codigo(yyout);
+    }
+#line 1464 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 134 "alfa.y" /* yacc.c:1646  */
+    {
+        escribir_inicio_main(yyout);
+    }
+#line 1472 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 147 "alfa.y" /* yacc.c:1646  */
+    { clase_actual = ESCALAR; }
+#line 1478 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 131 "alfa.y" /* yacc.c:1646  */
+#line 149 "alfa.y" /* yacc.c:1646  */
+    { clase_actual = VECTOR; }
+#line 1484 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 11:
+#line 155 "alfa.y" /* yacc.c:1646  */
     { 
         tipo_actual = INT;
         (yyval.atributos).tipo = INT;
     }
-#line 1446 "y.tab.c" /* yacc.c:1646  */
+#line 1493 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 10:
-#line 135 "alfa.y" /* yacc.c:1646  */
+  case 12:
+#line 159 "alfa.y" /* yacc.c:1646  */
     {
         tipo_actual = BOOLEAN; 
         (yyval.atributos).tipo = BOOLEAN;
     }
-#line 1455 "y.tab.c" /* yacc.c:1646  */
+#line 1502 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 11:
-#line 141 "alfa.y" /* yacc.c:1646  */
+  case 13:
+#line 165 "alfa.y" /* yacc.c:1646  */
     { 
         tam_vector_actual = (yyvsp[-1].atributos).valor_entero;
         if (tam_vector_actual < 1 || tam_vector_actual > MAX_TAM_VECTOR) {
-            fprintf(stderr, "ERROR: Tamaño de vector inválido.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Tamaño de vector inválido.\n", row, col);
             return PARAR_COMPILADOR;
         }
     }
-#line 1467 "y.tab.c" /* yacc.c:1646  */
+#line 1514 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 16:
-#line 158 "alfa.y" /* yacc.c:1646  */
+  case 14:
+#line 174 "alfa.y" /* yacc.c:1646  */
+    { }
+#line 1520 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 15:
+#line 175 "alfa.y" /* yacc.c:1646  */
+    { }
+#line 1526 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 182 "alfa.y" /* yacc.c:1646  */
     {
         if (TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema)) {
-            fprintf(stderr, "ERROR: nombre de funcion %s ya utilizado.\n", (yyvsp[0].atributos).lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: nombre de funcion %s ya utilizado.\n", row, col, (yyvsp[0].atributos).lexema);
             return PARAR_COMPILADOR;
         }
 
@@ -1490,170 +1549,212 @@ yyreduce:
 
         strcpy((yyval.atributos).lexema, (yyvsp[0].atributos).lexema);
     }
-#line 1494 "y.tab.c" /* yacc.c:1646  */
+#line 1553 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 17:
-#line 182 "alfa.y" /* yacc.c:1646  */
+  case 19:
+#line 206 "alfa.y" /* yacc.c:1646  */
     {
         TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[-5].atributos).lexema)->num_parametros = num_parametros_actual;
         TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[-5].atributos).lexema)->num_parametros = num_parametros_actual;
         strcpy((yyval.atributos).lexema, (yyvsp[-5].atributos).lexema);
     }
-#line 1504 "y.tab.c" /* yacc.c:1646  */
+#line 1563 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 18:
-#line 189 "alfa.y" /* yacc.c:1646  */
+  case 20:
+#line 213 "alfa.y" /* yacc.c:1646  */
     {
         local = false;
         TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[-2].atributos).lexema)->num_variables_locales = num_variables_locales_actual;
         TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[-2].atributos).lexema)->num_variables_locales = num_variables_locales_actual;
     }
-#line 1514 "y.tab.c" /* yacc.c:1646  */
+#line 1573 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 32:
-#line 229 "alfa.y" /* yacc.c:1646  */
+  case 38:
+#line 253 "alfa.y" /* yacc.c:1646  */
     { 
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[-2].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[-2].atributos).lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", (yyvsp[-2].atributos).lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[-2].atributos).lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[-2].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[-2].atributos).lexema));
-        if (atributos_actuales.tipo == FUNCION) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a una función, por lo que no es asignable.\n", (yyvsp[-2].atributos).lexema);
+        if (atributos_actuales.clase == FUNCION) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, por lo que no es asignable.\n", row, col, (yyvsp[-2].atributos).lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, por lo que no es asignable.\n", (yyvsp[-2].atributos).lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no es asignable.\n", row, col, (yyvsp[-2].atributos).lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.clase == BOOLEAN && (yyvsp[0].atributos).clase == INT) {
-            fprintf(stderr, "ERROR: Se intenta asignar a %s, de tipo booleano, una expresión de tipo entero.\n", (yyvsp[-2].atributos).lexema);
+        } else if (atributos_actuales.tipo == BOOLEAN && (yyvsp[0].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se intenta asignar a %s, de tipo booleano, una expresión de tipo entero.\n", row, col, (yyvsp[-2].atributos).lexema);
             return PARAR_COMPILADOR;            
-        } else if (atributos_actuales.clase == INT && (yyvsp[0].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: Se intenta asignar a %s, de tipo entero, una expresión de tipo booleano.\n", (yyvsp[-2].atributos).lexema);
+        } else if (atributos_actuales.tipo == INT && (yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se intenta asignar a %s, de tipo entero, una expresión de tipo booleano.\n", row, col, (yyvsp[-2].atributos).lexema);
             return PARAR_COMPILADOR;            
         }
 
-        /* GENERACIÓN DE CÓDIGO ASIGNACIÓN */
+        asignar(yyout, (yyvsp[-2].atributos).lexema, (yyvsp[0].atributos).es_direccion);
     }
-#line 1541 "y.tab.c" /* yacc.c:1646  */
+#line 1600 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 33:
-#line 251 "alfa.y" /* yacc.c:1646  */
+  case 39:
+#line 275 "alfa.y" /* yacc.c:1646  */
     { 
-        if ((yyvsp[-2].atributos).clase == BOOLEAN && (yyvsp[0].atributos).clase == INT) {
-            fprintf(stderr, "ERROR: Se intenta asignar a %s, de tipo booleano, una expresión de tipo entero.\n", (yyvsp[-2].atributos).lexema);
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN && (yyvsp[0].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se intenta asignar a %s, de tipo booleano, una expresión de tipo entero.\n", row, col, (yyvsp[-2].atributos).lexema);
             return PARAR_COMPILADOR;            
-        } else if ((yyvsp[-2].atributos).clase == INT && (yyvsp[0].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: Se intenta asignar a %s, de tipo entero, una expresión de tipo booleano.\n", (yyvsp[-2].atributos).lexema);
+        } else if ((yyvsp[-2].atributos).tipo == INT && (yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se intenta asignar a %s, de tipo entero, una expresión de tipo booleano.\n", row, col, (yyvsp[-2].atributos).lexema);
             return PARAR_COMPILADOR;            
         }
 
-        /* GENERACIÓN DE CÓDIGO ASIGNACIÓN */
+        asignar_vector(yyout, (yyvsp[0].atributos).es_direccion);
     }
-#line 1557 "y.tab.c" /* yacc.c:1646  */
+#line 1616 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 34:
-#line 264 "alfa.y" /* yacc.c:1646  */
+  case 40:
+#line 288 "alfa.y" /* yacc.c:1646  */
     {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[-3].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[-3].atributos).lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", (yyvsp[-3].atributos).lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[-3].atributos).lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[-3].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[-3].atributos).lexema));
-        if (atributos_actuales.tipo == FUNCION) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a una función, por lo que no es indexable.\n", (yyvsp[-3].atributos).lexema);
+        if (atributos_actuales.clase == FUNCION) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, por lo que no es indexable.\n", row, col, (yyvsp[-3].atributos).lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == ESCALAR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un escalar, por lo que no es indexable.\n", (yyvsp[-3].atributos).lexema);
+        } else if (atributos_actuales.clase == ESCALAR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un escalar, por lo que no es indexable.\n", row, col, (yyvsp[-3].atributos).lexema);
             return PARAR_COMPILADOR;
-        } else if ((yyvsp[-1].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: Se está indexando el vector %s con una expresión booleana, debería ser una expresión de tipo entero.\n", (yyvsp[-3].atributos).lexema);
+        } else if ((yyvsp[-1].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está indexando el vector %s con una expresión booleana, debería ser una expresión de tipo entero.\n", row, col, (yyvsp[-3].atributos).lexema);
             return PARAR_COMPILADOR;
         }
 
         strcpy((yyval.atributos).lexema, (yyvsp[-3].atributos).lexema);
         (yyval.atributos).tipo = atributos_actuales.tipo;
         (yyval.atributos).es_direccion = TRUE;
-        /* GENERACIÓN DE CÓDIGO APILAR ELEMENTO (?) */
-    }
-#line 1584 "y.tab.c" /* yacc.c:1646  */
-    break;
 
-  case 35:
-#line 288 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[-1].atributos).tipo == INT) {
-            fprintf(stderr, "ERROR: Se está usando una expresión entera como condicional en un IF, debería ser una expresión booleana.\n");
-            return PARAR_COMPILADOR;
-        }
-    }
-#line 1595 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 36:
-#line 296 "alfa.y" /* yacc.c:1646  */
-    { }
-#line 1601 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 37:
-#line 297 "alfa.y" /* yacc.c:1646  */
-    { }
-#line 1607 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 38:
-#line 300 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[-1].atributos).tipo == INT) {
-            fprintf(stderr, "ERROR: Se está usando una expresión entera como condicional en un WHILE, debería ser una expresión booleana.\n");
-            return PARAR_COMPILADOR;
-        }
-    }
-#line 1618 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 39:
-#line 308 "alfa.y" /* yacc.c:1646  */
-    { }
-#line 1624 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 40:
-#line 311 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[0].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[0].atributos).lexema));
-        if (atributos_actuales.tipo == FUNCION) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a una función, pero scanf recibe como argumento un escalar.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, pero scanf recibe como argumento un escalar.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        /* GENERACIÓN DE CÓDIGO LECTURA */
+        escribir_elemento_vector(yyout, (yyvsp[-3].atributos).lexema, atributos_actuales.numero_elementos, (yyvsp[-1].atributos).es_direccion);
     }
 #line 1644 "y.tab.c" /* yacc.c:1646  */
     break;
 
+  case 41:
+#line 313 "alfa.y" /* yacc.c:1646  */
+    {
+        ifthen_fin(yyout, (yyvsp[-3].atributos).etiqueta);
+    }
+#line 1652 "y.tab.c" /* yacc.c:1646  */
+    break;
+
   case 42:
-#line 331 "alfa.y" /* yacc.c:1646  */
+#line 316 "alfa.y" /* yacc.c:1646  */
+    {
+        ifthenelse_fin(yyout, (yyvsp[-3].atributos).etiqueta);
+    }
+#line 1660 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 321 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[-1].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un IF, debería ser una expresión booleana.\n", row, col);
+            return PARAR_COMPILADOR;
+        }
+
+        ifthen_inicio(yyout, (yyvsp[-1].atributos).es_direccion, etiqueta);
+        (yyval.atributos).etiqueta = etiqueta;
+        etiqueta++;
+    }
+#line 1675 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 333 "alfa.y" /* yacc.c:1646  */
+    {
+        ifthenelse_fin_then(yyout, (yyvsp[-4].atributos).etiqueta);
+        (yyval.atributos).etiqueta = (yyvsp[-4].atributos).etiqueta;
+    }
+#line 1684 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 339 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[-1].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un IF-ELSE, debería ser una expresión booleana.\n", row, col);
+            return PARAR_COMPILADOR;
+        }
+
+        ifthenelse_inicio(yyout, (yyvsp[-1].atributos).es_direccion, etiqueta);
+        (yyval.atributos).etiqueta = etiqueta;
+        etiqueta++;
+    }
+#line 1699 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 351 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[-1].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un WHILE, debería ser una expresión booleana.\n", row, col);
+            return PARAR_COMPILADOR;
+        }
+    }
+#line 1710 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 47:
+#line 359 "alfa.y" /* yacc.c:1646  */
+    { }
+#line 1716 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 48:
+#line 362 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema))) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[0].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[0].atributos).lexema));
+        if (atributos_actuales.clase == FUNCION) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, pero scanf recibe como argumento un escalar.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, pero scanf recibe como argumento un escalar.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        leer(yyout, (yyvsp[0].atributos).lexema, atributos_actuales.tipo);
+    }
+#line 1737 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 49:
+#line 380 "alfa.y" /* yacc.c:1646  */
+    {
+        escribir(yyout, (yyvsp[0].atributos).es_direccion, (yyvsp[0].atributos).tipo);
+    }
+#line 1745 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 50:
+#line 385 "alfa.y" /* yacc.c:1646  */
     { 
         if (!local) {
-            fprintf(stderr, "ERROR: Se ha declarado un RETURN fuera de una función, debería estar declarado dentro de una función.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se ha declarado un RETURN fuera de una función, debería estar declarado dentro de una función.\n", row, col);
             return PARAR_COMPILADOR;
         } else if (tipo_retorno_funcion_actual == INT && (yyvsp[0].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: El tipo de retorno de una función es INT, pero se está devolviendo un parámetro de tipo BOOLEAN.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El tipo de retorno de una función es INT, pero se está devolviendo un parámetro de tipo BOOLEAN.\n", row, col);
             return PARAR_COMPILADOR;
         } else if (tipo_retorno_funcion_actual == BOOLEAN && (yyvsp[0].atributos).tipo == INT) {
-            fprintf(stderr, "ERROR: El tipo de retorno de una función es BOOLEAN, pero se está devolviendo un parámetro de tipo INT.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El tipo de retorno de una función es BOOLEAN, pero se está devolviendo un parámetro de tipo INT.\n", row, col);
             return PARAR_COMPILADOR;
         }
 
@@ -1662,217 +1763,235 @@ yyreduce:
                 En el cuerpo de una función obligatoriamente tiene que aparecer al menos una sentencia de retorno. (?)
         */
     }
-#line 1666 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 43:
-#line 350 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[-2].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una suma.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una suma.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).clase = INT;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1684 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 44:
-#line 363 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[-2].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una resta.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una resta.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).clase = INT;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1702 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 45:
-#line 376 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[-2].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una división.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una división.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).clase = INT;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1720 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 46:
-#line 389 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[-2].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una multiplicación.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una multiplicación.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).clase = INT;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1738 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 47:
-#line 402 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[0].atributos).clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en un cambio de signo.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).clase = INT;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1752 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 48:
-#line 411 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[-2].atributos).clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en un Y lógico.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en un Y lógico.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-
-        (yyval.atributos).clase = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1770 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 49:
-#line 424 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[-2].atributos).clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en un O lógico.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en un O lógico.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-
-        (yyval.atributos).clase = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1788 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 50:
-#line 437 "alfa.y" /* yacc.c:1646  */
-    {
-        if ((yyvsp[0].atributos).clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en una negación lógica.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-
-        (yyval.atributos).clase = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1802 "y.tab.c" /* yacc.c:1646  */
+#line 1767 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 446 "alfa.y" /* yacc.c:1646  */
+#line 404 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una suma.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una suma.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = INT;
+        (yyval.atributos).es_direccion = FALSE;
+
+        sumar(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
+    }
+#line 1787 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 52:
+#line 419 "alfa.y" /* yacc.c:1646  */
+    { 
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una resta.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una resta.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = INT;
+        (yyval.atributos).es_direccion = FALSE;
+
+        restar(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
+    }
+#line 1807 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 53:
+#line 434 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una división.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una división.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = INT;
+        (yyval.atributos).es_direccion = FALSE;
+
+        dividir(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
+    }
+#line 1827 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 54:
+#line 449 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una multiplicación.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una multiplicación.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = INT;
+        (yyval.atributos).es_direccion = FALSE;
+
+        multiplicar(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
+    }
+#line 1847 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 55:
+#line 464 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en un cambio de signo.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = INT;
+        (yyval.atributos).es_direccion = FALSE;
+
+        cambiar_signo(yyout, (yyvsp[0].atributos).es_direccion);
+    }
+#line 1863 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 56:
+#line 475 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[-2].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un Y lógico.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un Y lógico.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        (yyval.atributos).tipo = BOOLEAN;
+        (yyval.atributos).es_direccion = FALSE;
+
+        y(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
+    }
+#line 1883 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 57:
+#line 490 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[-2].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un O lógico.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un O lógico.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        (yyval.atributos).tipo = BOOLEAN;
+        (yyval.atributos).es_direccion = FALSE;
+
+        o(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion);
+    }
+#line 1903 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 58:
+#line 505 "alfa.y" /* yacc.c:1646  */
+    {
+        if ((yyvsp[0].atributos).tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en una negación lógica.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+
+        (yyval.atributos).tipo = BOOLEAN;
+        (yyval.atributos).es_direccion = FALSE;
+
+        no(yyout, (yyvsp[0].atributos).es_direccion, etiqueta);
+        etiqueta++;
+    }
+#line 1920 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 59:
+#line 517 "alfa.y" /* yacc.c:1646  */
     {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", (yyvsp[0].atributos).lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[0].atributos).lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[0].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[0].atributos).lexema));
-        if (atributos_actuales.tipo == FUNCION) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a una función, por lo que no se puede acceder a su valor.\n", (yyvsp[0].atributos).lexema);
+        if (atributos_actuales.clase == FUNCION) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, por lo que no se puede acceder a su valor.\n", row, col, (yyvsp[0].atributos).lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, por lo que no se puede acceder a su valor.\n", (yyvsp[0].atributos).lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no se puede acceder a su valor.\n", row, col, (yyvsp[0].atributos).lexema);
             return PARAR_COMPILADOR;
         }
 
         (yyval.atributos).tipo = atributos_actuales.tipo;
         (yyval.atributos).es_direccion = TRUE;
-        /* GENERACIÓN DE CÓDIGO APILAR (?) */
+
+        escribir_operando(yyout, (yyvsp[0].atributos).lexema, TRUE);
     }
-#line 1825 "y.tab.c" /* yacc.c:1646  */
+#line 1944 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 52:
-#line 464 "alfa.y" /* yacc.c:1646  */
+  case 60:
+#line 536 "alfa.y" /* yacc.c:1646  */
     { 
         (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion; 
     }
-#line 1834 "y.tab.c" /* yacc.c:1646  */
+#line 1953 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 53:
-#line 468 "alfa.y" /* yacc.c:1646  */
+  case 61:
+#line 540 "alfa.y" /* yacc.c:1646  */
     {
         (yyval.atributos).tipo = (yyvsp[-1].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[-1].atributos).es_direccion; 
     }
-#line 1843 "y.tab.c" /* yacc.c:1646  */
+#line 1962 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 54:
-#line 472 "alfa.y" /* yacc.c:1646  */
+  case 62:
+#line 544 "alfa.y" /* yacc.c:1646  */
     {
         (yyval.atributos).tipo = (yyvsp[-1].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[-1].atributos).es_direccion; 
     }
-#line 1852 "y.tab.c" /* yacc.c:1646  */
+#line 1971 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 55:
-#line 476 "alfa.y" /* yacc.c:1646  */
+  case 63:
+#line 548 "alfa.y" /* yacc.c:1646  */
     { 
         (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
         (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion; 
     }
-#line 1861 "y.tab.c" /* yacc.c:1646  */
+#line 1980 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 56:
-#line 480 "alfa.y" /* yacc.c:1646  */
+  case 64:
+#line 552 "alfa.y" /* yacc.c:1646  */
     {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[-3].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[-3].atributos).lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", (yyvsp[-3].atributos).lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[-3].atributos).lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[-3].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[-3].atributos).lexema));
-        if (atributos_actuales.tipo == ESCALAR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", (yyvsp[-3].atributos).lexema);
+        if (atributos_actuales.clase == ESCALAR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", row, col, (yyvsp[-3].atributos).lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, por lo que no es invocable.\n", (yyvsp[-3].atributos).lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no es invocable.\n", row, col, (yyvsp[-3].atributos).lexema);
             return PARAR_COMPILADOR;
         }
         /* GENERACIÓN DE CÓDIGO LLAMADA A FUNCIÓN (?) */
@@ -1880,27 +1999,27 @@ yyreduce:
         (yyval.atributos).es_direccion = FALSE;
         (yyval.atributos).tipo = atributos_actuales.tipo;
     }
-#line 1884 "y.tab.c" /* yacc.c:1646  */
+#line 2003 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 57:
-#line 500 "alfa.y" /* yacc.c:1646  */
+  case 65:
+#line 572 "alfa.y" /* yacc.c:1646  */
     {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", (yyvsp[0].atributos).lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, (yyvsp[0].atributos).lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, (yyvsp[0].atributos).lexema) : TablaSimbolos_uso_global(tabla_simbolos, (yyvsp[0].atributos).lexema));
-        if (atributos_actuales.tipo == ESCALAR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", (yyvsp[0].atributos).lexema);
+        if (atributos_actuales.clase == ESCALAR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", row, col, (yyvsp[0].atributos).lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, por lo que no es invocable.\n", (yyvsp[0].atributos).lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no es invocable.\n", row, col, (yyvsp[0].atributos).lexema);
             return PARAR_COMPILADOR;
         }
 
         if (en_explist == TRUE) {
-            fprintf(stderr, "ERROR: Se están anidando las llamadas a función.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se están anidando las llamadas a función.\n", row, col);
             return PARAR_COMPILADOR;
         }
 
@@ -1908,180 +2027,202 @@ yyreduce:
         en_explist = TRUE;
         strcpy((yyval.atributos).lexema, (yyvsp[0].atributos).lexema);
     }
-#line 1912 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 58:
-#line 525 "alfa.y" /* yacc.c:1646  */
-    {
-        num_parametros_actual++;
-    }
-#line 1920 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 60:
-#line 531 "alfa.y" /* yacc.c:1646  */
-    {
-        num_parametros_actual++;
-    }
-#line 1928 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 62:
-#line 537 "alfa.y" /* yacc.c:1646  */
-    { 
-        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).tipo = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1946 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 63:
-#line 550 "alfa.y" /* yacc.c:1646  */
-    { 
-        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).tipo = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1964 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 64:
-#line 563 "alfa.y" /* yacc.c:1646  */
-    { 
-        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).tipo = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 1982 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 65:
-#line 576 "alfa.y" /* yacc.c:1646  */
-    { 
-        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).tipo = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 2000 "y.tab.c" /* yacc.c:1646  */
+#line 2031 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 589 "alfa.y" /* yacc.c:1646  */
-    { 
-        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).tipo = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
+#line 597 "alfa.y" /* yacc.c:1646  */
+    {
+        num_parametros_actual++;
     }
-#line 2018 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 67:
-#line 602 "alfa.y" /* yacc.c:1646  */
-    { 
-        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[-2].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", (yyvsp[0].atributos).lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        (yyval.atributos).tipo = BOOLEAN;
-        (yyval.atributos).es_direccion = 0;
-    }
-#line 2036 "y.tab.c" /* yacc.c:1646  */
+#line 2039 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 617 "alfa.y" /* yacc.c:1646  */
-    { 
-        (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
-        (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion;
+#line 603 "alfa.y" /* yacc.c:1646  */
+    {
+        num_parametros_actual++;
     }
-#line 2045 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 69:
-#line 621 "alfa.y" /* yacc.c:1646  */
-    { 
-        (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
-        (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion;
-    }
-#line 2054 "y.tab.c" /* yacc.c:1646  */
+#line 2047 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 627 "alfa.y" /* yacc.c:1646  */
+#line 609 "alfa.y" /* yacc.c:1646  */
     { 
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
         (yyval.atributos).tipo = BOOLEAN;
         (yyval.atributos).es_direccion = FALSE;
+
+        igual(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
+        etiqueta++;
     }
-#line 2063 "y.tab.c" /* yacc.c:1646  */
+#line 2068 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 631 "alfa.y" /* yacc.c:1646  */
+#line 625 "alfa.y" /* yacc.c:1646  */
     { 
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
         (yyval.atributos).tipo = BOOLEAN;
         (yyval.atributos).es_direccion = FALSE;
+
+        distinto(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
+        etiqueta++;
     }
-#line 2072 "y.tab.c" /* yacc.c:1646  */
+#line 2089 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 637 "alfa.y" /* yacc.c:1646  */
-    {
-        (yyval.atributos).tipo = INT;
+#line 641 "alfa.y" /* yacc.c:1646  */
+    { 
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = BOOLEAN;
         (yyval.atributos).es_direccion = FALSE;
+
+        menor_igual(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
+        etiqueta++;
     }
-#line 2081 "y.tab.c" /* yacc.c:1646  */
+#line 2110 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 643 "alfa.y" /* yacc.c:1646  */
+#line 657 "alfa.y" /* yacc.c:1646  */
+    { 
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = BOOLEAN;
+        (yyval.atributos).es_direccion = FALSE;
+
+        mayor_igual(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
+        etiqueta++;
+    }
+#line 2131 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 74:
+#line 673 "alfa.y" /* yacc.c:1646  */
+    { 
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = BOOLEAN;
+        (yyval.atributos).es_direccion = FALSE;
+
+        menor(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
+        etiqueta++;
+    }
+#line 2152 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 75:
+#line 689 "alfa.y" /* yacc.c:1646  */
+    { 
+        if ((yyvsp[-2].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[-2].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ((yyvsp[0].atributos).tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, (yyvsp[0].atributos).lexema);
+            return PARAR_COMPILADOR;
+        }
+        
+        (yyval.atributos).tipo = BOOLEAN;
+        (yyval.atributos).es_direccion = FALSE;
+
+        mayor(yyout, (yyvsp[-2].atributos).es_direccion, (yyvsp[0].atributos).es_direccion, etiqueta);
+        etiqueta++;
+    }
+#line 2173 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 76:
+#line 707 "alfa.y" /* yacc.c:1646  */
+    { 
+        (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
+        (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion;
+    }
+#line 2182 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 77:
+#line 711 "alfa.y" /* yacc.c:1646  */
+    { 
+        (yyval.atributos).tipo = (yyvsp[0].atributos).tipo;
+        (yyval.atributos).es_direccion = (yyvsp[0].atributos).es_direccion;
+    }
+#line 2191 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 78:
+#line 717 "alfa.y" /* yacc.c:1646  */
+    { 
+        (yyval.atributos).tipo = BOOLEAN;
+        (yyval.atributos).es_direccion = FALSE;
+        escribir_operando(yyout, "1", false);
+    }
+#line 2201 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 79:
+#line 722 "alfa.y" /* yacc.c:1646  */
+    { 
+        (yyval.atributos).tipo = BOOLEAN;
+        (yyval.atributos).es_direccion = FALSE;
+        escribir_operando(yyout, "0", false);
+    }
+#line 2211 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 80:
+#line 729 "alfa.y" /* yacc.c:1646  */
+    {
+        (yyval.atributos).tipo = INT;
+        (yyval.atributos).es_direccion = FALSE;
+        sprintf(atributos_actuales.lexema, "%d", (yyvsp[0].atributos).valor_entero);
+        escribir_operando(yyout, atributos_actuales.lexema, false);
+    }
+#line 2222 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 81:
+#line 737 "alfa.y" /* yacc.c:1646  */
     {
         strcpy(atributos_actuales.lexema, (yyvsp[0].atributos).lexema);
         atributos_actuales.clase = clase_actual;
@@ -2089,29 +2230,29 @@ yyreduce:
 
         if (local) {
             if (TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) {
-                fprintf(stderr, "ERROR: Identificador %s duplicado.\n", (yyvsp[0].atributos).lexema);
+                fprintf(stderr, "Error semántico [lin %d, col %d]: Identificador %s duplicado.\n", row, col, (yyvsp[0].atributos).lexema);
                 return PARAR_COMPILADOR;
             } else {
                 TablaSimbolos_declarar_local(tabla_simbolos, (yyvsp[0].atributos).lexema, &atributos_actuales);
             }
         } else {
             if (TablaSimbolos_existe_global(tabla_simbolos, (yyvsp[0].atributos).lexema)) {
-                fprintf(stderr, "ERROR: Identificador %s duplicado.\n", (yyvsp[0].atributos).lexema);
+                fprintf(stderr, "Error semántico [lin %d, col %d]: Identificador %s duplicado.\n", row, col, (yyvsp[0].atributos).lexema);
                 return PARAR_COMPILADOR;
             } else {
                 TablaSimbolos_declarar_global(tabla_simbolos, (yyvsp[0].atributos).lexema, &atributos_actuales);
             }
         }
     }
-#line 2107 "y.tab.c" /* yacc.c:1646  */
+#line 2248 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 74:
-#line 666 "alfa.y" /* yacc.c:1646  */
+  case 82:
+#line 760 "alfa.y" /* yacc.c:1646  */
     {
         strcpy(atributos_actuales.lexema, (yyvsp[0].atributos).lexema);
         if (TablaSimbolos_existe_local(tabla_simbolos, (yyvsp[0].atributos).lexema)) {
-            fprintf(stderr, "ERROR: Identificador %s duplicado en la declaración de la función.\n", (yyvsp[0].atributos).lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Identificador %s duplicado en la declaración de la función.\n", row, col, (yyvsp[0].atributos).lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales.posicion = pos_parametro_actual;
@@ -2119,11 +2260,11 @@ yyreduce:
         pos_parametro_actual++;
         num_parametros_actual++;
     }
-#line 2123 "y.tab.c" /* yacc.c:1646  */
+#line 2264 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2127 "y.tab.c" /* yacc.c:1646  */
+#line 2268 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2351,33 +2492,33 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 678 "alfa.y" /* yacc.c:1906  */
+#line 772 "alfa.y" /* yacc.c:1906  */
 
 
 int main(int argc, char **argv) {
     int status;
 
     if (argc != 3) {
-        fprintf(stderr, "Número incorrecto de argumentos.\n");
+        fprintf(stderr, "Error: Número incorrecto de argumentos.\n");
         return -1;
     }
 
     yyin = fopen(argv[1], "r");
     if (yyin == NULL) {
-        fprintf(stderr, "No se ha podido abrir el fichero %s.\n", argv[1]);
+        fprintf(stderr, "Error: No se ha podido abrir el fichero %s.\n", argv[1]);
         return -1;
     }
 
     yyout = fopen(argv[2], "w");
     if (yyout == NULL) {
-        fprintf(stderr, "No se ha podido abrir el fichero %s.\n", argv[2]);
+        fprintf(stderr, "Error: No se ha podido abrir el fichero %s.\n", argv[2]);
         fclose(yyin);
         return -1;
     }
 
     tabla_simbolos = TablaSimbolos_create();
     if (tabla_simbolos == NULL) {
-        fprintf(stderr, "No se ha podido crear la tabla de símbolos.\n");
+        fprintf(stderr, "Error: No se ha podido crear la tabla de símbolos.\n");
         fclose(yyin);
         fclose(yyout);
         return -1;
@@ -2396,7 +2537,7 @@ int main(int argc, char **argv) {
 
 int yyerror(char *s) {
     if (codigo_tok != TOK_ERROR) {
-        fprintf(stderr, "Error sintactico en [lin %d, col %d]\n", row, col-yyleng);
+        fprintf(stderr, "Error sintáctico [lin %d, col %d]\n", row, col-yyleng);
     }
     return 0;
 }

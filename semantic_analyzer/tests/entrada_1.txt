@@ -1,7 +1,0 @@
-main {
-  int x, resultado;
-
-  x = 2;
-  resultado = x*x;
-  printf resultado;
-}

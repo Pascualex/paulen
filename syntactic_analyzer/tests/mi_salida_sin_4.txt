@@ -33,7 +33,33 @@
 ;R3:	<declaraciones> ::= <declaracion> <declaraciones>
 ;R21:	<funciones> ::=
 ;D:	(
+;D:	(
 ;D:	x
 ;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	==
 ;R80:	<exp> ::= <identificador>
+;D:	2
+;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	)
+;R93:	<comparacion> ::= <exp> == <exp>
+;R83:	<exp> ::= ( <comparacion> )
+;D:	)
+;D:	{
+;D:	z
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	+
+;R80:	<exp> ::= <identificador>
+;D:	y
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R80:	<exp> ::= <identificador>
+;R72:	<exp> ::= <exp> + <exp>
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	printf

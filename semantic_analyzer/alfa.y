@@ -1,7 +1,8 @@
 %{
     #include "alfa.h"
-    #include "y.tab.h"
+    #include "generacion.h"
     #include "TablaSimbolos.h"
+    #include "y.tab.h"
     #include <stdlib.h>
     #include <stdio.h>
     #include <stdarg.h>
@@ -31,9 +32,15 @@
     int num_variables_locales_actual;
     
     tipo_atributos atributos_actuales;
+
+    int etiqueta = 1;
     
     int yyerror(char *s);
 %}
+
+%code requires {
+    #include "alfa.h"
+}
 
 %union {
     tipo_atributos atributos;
@@ -97,6 +104,9 @@
 %type <atributos> comparacion
 %type <atributos> idf_llamada_funcion
 %type <atributos> elemento_vector
+%type <atributos> if_exp
+%type <atributos> if_else_then_exp
+%type <atributos> if_else_then_else_exp
 
 /* Precedencia de operadores */
 %left TOK_OR TOK_AND TOK_NOT
@@ -109,7 +119,21 @@
 %%
 
 programa:
-    TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones funciones sentencias TOK_LLAVEDERECHA;
+    TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones escritura_TS funciones escritura_main sentencias TOK_LLAVEDERECHA {
+        escribir_fin(yyout);
+    };
+
+escritura_TS: 
+    /* lambda */ {
+        escribir_cabecera_bss(yyout, tabla_simbolos);
+        escribir_subseccion_data(yyout);
+        escribir_segmento_codigo(yyout);
+    };
+
+escritura_main:
+    /* lambda */ {
+        escribir_inicio_main(yyout);
+    };
 
 declaraciones:
     declaracion |
@@ -141,14 +165,14 @@ clase_vector:
     TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO TOK_CONSTANTE_ENTERA TOK_CORCHETEDERECHO { 
         tam_vector_actual = $4.valor_entero;
         if (tam_vector_actual < 1 || tam_vector_actual > MAX_TAM_VECTOR) {
-            fprintf(stderr, "ERROR: Tamaño de vector inválido.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Tamaño de vector inválido.\n", row, col);
             return PARAR_COMPILADOR;
         }
     };
 
 identificadores:
-    identificador |
-    identificador TOK_COMA identificadores;
+    identificador { } |
+    identificador TOK_COMA identificadores { };
 
 funciones:
     funcion funciones |
@@ -157,7 +181,7 @@ funciones:
 fn_name:
     TOK_FUNCTION tipo TOK_IDENTIFICADOR {
         if (TablaSimbolos_existe_global(tabla_simbolos, $3.lexema)) {
-            fprintf(stderr, "ERROR: nombre de funcion %s ya utilizado.\n", $3.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: nombre de funcion %s ya utilizado.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
 
@@ -179,7 +203,7 @@ fn_name:
     };
 
 fn_declaration:
-    fn_name TOK_PARENTESISIZQUIERDO parametro_funcion TOK_PARENTESISDERECHO TOK_CORCHETEIZQUIERDO declaraciones_funcion {
+    fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_CORCHETEIZQUIERDO declaraciones_funcion {
         TablaSimbolos_uso_global(tabla_simbolos, $1.lexema)->num_parametros = num_parametros_actual;
         TablaSimbolos_uso_local(tabla_simbolos, $1.lexema)->num_parametros = num_parametros_actual;
         strcpy($$.lexema, $1.lexema);
@@ -228,78 +252,105 @@ bloque:
 asignacion:
     TOK_IDENTIFICADOR TOK_ASIGNACION exp { 
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
-        if (atributos_actuales.tipo == FUNCION) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a una función, por lo que no es asignable.\n", $1.lexema);
+        if (atributos_actuales.clase == FUNCION) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, por lo que no es asignable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, por lo que no es asignable.\n", $1.lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no es asignable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.clase == BOOLEAN && $3.clase == INT) {
-            fprintf(stderr, "ERROR: Se intenta asignar a %s, de tipo booleano, una expresión de tipo entero.\n", $1.lexema);
+        } else if (atributos_actuales.tipo == BOOLEAN && $3.tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se intenta asignar a %s, de tipo booleano, una expresión de tipo entero.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;            
-        } else if (atributos_actuales.clase == INT && $3.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: Se intenta asignar a %s, de tipo entero, una expresión de tipo booleano.\n", $1.lexema);
+        } else if (atributos_actuales.tipo == INT && $3.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se intenta asignar a %s, de tipo entero, una expresión de tipo booleano.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;            
         }
 
-        /* GENERACIÓN DE CÓDIGO ASIGNACIÓN */
+        asignar(yyout, $1.lexema, $3.es_direccion);
     } |
     elemento_vector TOK_ASIGNACION exp { 
-        if ($1.clase == BOOLEAN && $3.clase == INT) {
-            fprintf(stderr, "ERROR: Se intenta asignar a %s, de tipo booleano, una expresión de tipo entero.\n", $1.lexema);
+        if ($1.tipo == BOOLEAN && $3.tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se intenta asignar a %s, de tipo booleano, una expresión de tipo entero.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;            
-        } else if ($1.clase == INT && $3.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: Se intenta asignar a %s, de tipo entero, una expresión de tipo booleano.\n", $1.lexema);
+        } else if ($1.tipo == INT && $3.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se intenta asignar a %s, de tipo entero, una expresión de tipo booleano.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;            
         }
 
-        /* GENERACIÓN DE CÓDIGO ASIGNACIÓN */
+        asignar_vector(yyout, $3.es_direccion);
     };
 
 elemento_vector:
     TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
-        if (atributos_actuales.tipo == FUNCION) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a una función, por lo que no es indexable.\n", $1.lexema);
+        if (atributos_actuales.clase == FUNCION) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, por lo que no es indexable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == ESCALAR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un escalar, por lo que no es indexable.\n", $1.lexema);
+        } else if (atributos_actuales.clase == ESCALAR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un escalar, por lo que no es indexable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
-        } else if ($3.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: Se está indexando el vector %s con una expresión booleana, debería ser una expresión de tipo entero.\n", $1.lexema);
+        } else if ($3.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está indexando el vector %s con una expresión booleana, debería ser una expresión de tipo entero.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
 
         strcpy($$.lexema, $1.lexema);
         $$.tipo = atributos_actuales.tipo;
         $$.es_direccion = TRUE;
-        /* GENERACIÓN DE CÓDIGO APILAR ELEMENTO (?) */
+
+        escribir_elemento_vector(yyout, $1.lexema, atributos_actuales.numero_elementos, $3.es_direccion);
+    };
+
+condicional:
+    if_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
+        ifthen_fin(yyout, $1.etiqueta);
+    } |
+    if_else_then_else_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
+        ifthenelse_fin(yyout, $1.etiqueta);
     };
 
 if_exp:
     TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {
         if ($3.tipo == INT) {
-            fprintf(stderr, "ERROR: Se está usando una expresión entera como condicional en un IF, debería ser una expresión booleana.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un IF, debería ser una expresión booleana.\n", row, col);
             return PARAR_COMPILADOR;
         }
+
+        ifthen_inicio(yyout, $3.es_direccion, etiqueta);
+        $$.etiqueta = etiqueta;
+        etiqueta++;
     };
 
-condicional:
-    if_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA { } |
-    if_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA { };
+if_else_then_else_exp:
+    if_else_then_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE {
+        ifthenelse_fin_then(yyout, $1.etiqueta);
+        $$.etiqueta = $1.etiqueta;
+    };
+
+if_else_then_exp:
+    TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {
+        if ($3.tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un IF-ELSE, debería ser una expresión booleana.\n", row, col);
+            return PARAR_COMPILADOR;
+        }
+
+        ifthenelse_inicio(yyout, $3.es_direccion, etiqueta);
+        $$.etiqueta = etiqueta;
+        etiqueta++;
+    };
 
 while_exp:
     TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {
         if ($3.tipo == INT) {
-            fprintf(stderr, "ERROR: Se está usando una expresión entera como condicional en un WHILE, debería ser una expresión booleana.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un WHILE, debería ser una expresión booleana.\n", row, col);
             return PARAR_COMPILADOR;
         }
     };
@@ -310,33 +361,36 @@ bucle:
 lectura:
     TOK_SCANF TOK_IDENTIFICADOR {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $2.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $2.lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", $2.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, $2.lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, $2.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $2.lexema));
-        if (atributos_actuales.tipo == FUNCION) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a una función, pero scanf recibe como argumento un escalar.\n", $2.lexema);
+        if (atributos_actuales.clase == FUNCION) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, pero scanf recibe como argumento un escalar.\n", row, col, $2.lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, pero scanf recibe como argumento un escalar.\n", $2.lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, pero scanf recibe como argumento un escalar.\n", row, col, $2.lexema);
             return PARAR_COMPILADOR;
         }
-        /* GENERACIÓN DE CÓDIGO LECTURA */
+
+        leer(yyout, $2.lexema, atributos_actuales.tipo);
     };
 
 escritura:
-    TOK_PRINTF exp;
+    TOK_PRINTF exp {
+        escribir(yyout, $2.es_direccion, $2.tipo);
+    };
 
 retorno_funcion:
     TOK_RETURN exp { 
         if (!local) {
-            fprintf(stderr, "ERROR: Se ha declarado un RETURN fuera de una función, debería estar declarado dentro de una función.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se ha declarado un RETURN fuera de una función, debería estar declarado dentro de una función.\n", row, col);
             return PARAR_COMPILADOR;
         } else if (tipo_retorno_funcion_actual == INT && $2.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: El tipo de retorno de una función es INT, pero se está devolviendo un parámetro de tipo BOOLEAN.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El tipo de retorno de una función es INT, pero se está devolviendo un parámetro de tipo BOOLEAN.\n", row, col);
             return PARAR_COMPILADOR;
         } else if (tipo_retorno_funcion_actual == BOOLEAN && $2.tipo == INT) {
-            fprintf(stderr, "ERROR: El tipo de retorno de una función es BOOLEAN, pero se está devolviendo un parámetro de tipo INT.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El tipo de retorno de una función es BOOLEAN, pero se está devolviendo un parámetro de tipo INT.\n", row, col);
             return PARAR_COMPILADOR;
         }
 
@@ -347,119 +401,137 @@ retorno_funcion:
     };
 
 exp:
-    exp TOK_MAS exp {
-        if ($1.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una suma.\n", $1.lexema);
+    exp TOK_MAS exp /* Testeada */ {
+        if ($1.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una suma.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
-        if ($3.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una suma.\n", $3.lexema);
-            return PARAR_COMPILADOR;
-        }
-        
-        $$.clase = INT;
-        $$.es_direccion = 0;
-    } |
-    exp TOK_MENOS exp {
-        if ($1.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una resta.\n", $1.lexema);
-            return PARAR_COMPILADOR;
-        }
-        if ($3.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una resta.\n", $3.lexema);
+        if ($3.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una suma.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
-        $$.clase = INT;
-        $$.es_direccion = 0;
+        $$.tipo = INT;
+        $$.es_direccion = FALSE;
+
+        sumar(yyout, $1.es_direccion, $3.es_direccion);
     } |
-    exp TOK_DIVISION exp {
-        if ($1.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una división.\n", $1.lexema);
+    exp TOK_MENOS exp /* Testeada */ { 
+        if ($1.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una resta.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
-        if ($3.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una división.\n", $3.lexema);
+        if ($3.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una resta.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
-        $$.clase = INT;
-        $$.es_direccion = 0;
+        $$.tipo = INT;
+        $$.es_direccion = FALSE;
+
+        restar(yyout, $1.es_direccion, $3.es_direccion);
     } |
-    exp TOK_ASTERISCO exp {
-        if ($1.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una multiplicación.\n", $1.lexema);
+    exp TOK_DIVISION exp /* Testeada */ {
+        if ($1.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una división.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
-        if ($3.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una multiplicación.\n", $3.lexema);
+        if ($3.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una división.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
-        $$.clase = INT;
-        $$.es_direccion = 0;
+        $$.tipo = INT;
+        $$.es_direccion = FALSE;
+
+        dividir(yyout, $1.es_direccion, $3.es_direccion);
     } |
-    TOK_MENOS exp {
-        if ($2.clase == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en un cambio de signo.\n", $2.lexema);
+    exp TOK_ASTERISCO exp /* Testeada */ {
+        if ($1.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una multiplicación.\n", row, col, $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una multiplicación.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
-        $$.clase = INT;
-        $$.es_direccion = 0;
+        $$.tipo = INT;
+        $$.es_direccion = FALSE;
+
+        multiplicar(yyout, $1.es_direccion, $3.es_direccion);
     } |
-    exp TOK_AND exp {
-        if ($1.clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en un Y lógico.\n", $1.lexema);
+    TOK_MENOS exp /* Testeada */ {
+        if ($2.tipo == BOOLEAN) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en un cambio de signo.\n", row, col, $2.lexema);
             return PARAR_COMPILADOR;
         }
-        if ($3.clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en un Y lógico.\n", $1.lexema);
+        
+        $$.tipo = INT;
+        $$.es_direccion = FALSE;
+
+        cambiar_signo(yyout, $2.es_direccion);
+    } |
+    exp TOK_AND exp /* Testeada */ {
+        if ($1.tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un Y lógico.\n", row, col, $1.lexema);
+            return PARAR_COMPILADOR;
+        }
+        if ($3.tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un Y lógico.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
 
-        $$.clase = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = FALSE;
+
+        y(yyout, $1.es_direccion, $3.es_direccion);
     } |
     exp TOK_OR exp {
-        if ($1.clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en un O lógico.\n", $1.lexema);
+        if ($1.tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un O lógico.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
-        if ($3.clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en un O lógico.\n", $1.lexema);
+        if ($3.tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en un O lógico.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
 
-        $$.clase = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = FALSE;
+
+        o(yyout, $1.es_direccion, $3.es_direccion);
     } |
     TOK_NOT exp {
-        if ($2.clase == INT) {
-            fprintf(stderr, "ERROR: la expresión %s es un entero, pero se usa en una negación lógica.\n", $2.lexema);
+        if ($2.tipo == INT) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un entero, pero se usa en una negación lógica.\n", row, col, $2.lexema);
             return PARAR_COMPILADOR;
         }
 
-        $$.clase = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.tipo = BOOLEAN;
+        $$.es_direccion = FALSE;
+
+        no(yyout, $2.es_direccion, etiqueta);
+        etiqueta++;
     } |
     TOK_IDENTIFICADOR {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
-        if (atributos_actuales.tipo == FUNCION) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a una función, por lo que no se puede acceder a su valor.\n", $1.lexema);
+        if (atributos_actuales.clase == FUNCION) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a una función, por lo que no se puede acceder a su valor.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, por lo que no se puede acceder a su valor.\n", $1.lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no se puede acceder a su valor.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
 
         $$.tipo = atributos_actuales.tipo;
         $$.es_direccion = TRUE;
-        /* GENERACIÓN DE CÓDIGO APILAR (?) */
+
+        escribir_operando(yyout, $1.lexema, TRUE);
     } |
     constante { 
         $$.tipo = $1.tipo;
@@ -479,15 +551,15 @@ exp:
     } |
     idf_llamada_funcion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
-        if (atributos_actuales.tipo == ESCALAR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", $1.lexema);
+        if (atributos_actuales.clase == ESCALAR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, por lo que no es invocable.\n", $1.lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no es invocable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         /* GENERACIÓN DE CÓDIGO LLAMADA A FUNCIÓN (?) */
@@ -499,20 +571,20 @@ exp:
 idf_llamada_funcion:
     TOK_IDENTIFICADOR {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
-            fprintf(stderr, "ERROR: El identificador %s no ha sido declarado.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s no ha sido declarado.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales = *(local ? TablaSimbolos_uso_local(tabla_simbolos, $1.lexema) : TablaSimbolos_uso_global(tabla_simbolos, $1.lexema));
-        if (atributos_actuales.tipo == ESCALAR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", $1.lexema);
+        if (atributos_actuales.clase == ESCALAR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un escalar, por lo que no es invocable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
-        } else if (atributos_actuales.tipo == VECTOR) {
-            fprintf(stderr, "ERROR: El identificador %s corresponde a un vector, por lo que no es invocable.\n", $1.lexema);
+        } else if (atributos_actuales.clase == VECTOR) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no es invocable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
 
         if (en_explist == TRUE) {
-            fprintf(stderr, "ERROR: Se están anidando las llamadas a función.\n");
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Se están anidando las llamadas a función.\n", row, col);
             return PARAR_COMPILADOR;
         }
 
@@ -536,81 +608,99 @@ resto_lista_expresiones:
 comparacion:
     exp TOK_IGUAL exp { 
         if ($1.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         if ($3.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
         $$.tipo = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.es_direccion = FALSE;
+
+        igual(yyout, $1.es_direccion, $3.es_direccion, etiqueta);
+        etiqueta++;
     } |
     exp TOK_DISTINTO exp { 
         if ($1.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         if ($3.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
         $$.tipo = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.es_direccion = FALSE;
+
+        distinto(yyout, $1.es_direccion, $3.es_direccion, etiqueta);
+        etiqueta++;
     } |
     exp TOK_MENORIGUAL exp { 
         if ($1.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         if ($3.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
         $$.tipo = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.es_direccion = FALSE;
+
+        menor_igual(yyout, $1.es_direccion, $3.es_direccion, etiqueta);
+        etiqueta++;
     } |
     exp TOK_MAYORIGUAL exp { 
         if ($1.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         if ($3.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
         $$.tipo = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.es_direccion = FALSE;
+
+        mayor_igual(yyout, $1.es_direccion, $3.es_direccion, etiqueta);
+        etiqueta++;
     } |
     exp TOK_MENOR exp { 
         if ($1.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         if ($3.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
         $$.tipo = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.es_direccion = FALSE;
+
+        menor(yyout, $1.es_direccion, $3.es_direccion, etiqueta);
+        etiqueta++;
     } |
     exp TOK_MAYOR exp { 
         if ($1.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         if ($3.tipo == BOOLEAN) {
-            fprintf(stderr, "ERROR: la expresión %s es un booleano, pero se usa en una comparación.\n", $3.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: la expresión %s es un booleano, pero se usa en una comparación.\n", row, col, $3.lexema);
             return PARAR_COMPILADOR;
         }
         
         $$.tipo = BOOLEAN;
-        $$.es_direccion = 0;
+        $$.es_direccion = FALSE;
+
+        mayor(yyout, $1.es_direccion, $3.es_direccion, etiqueta);
+        etiqueta++;
     }
 
 constante:
@@ -627,16 +717,20 @@ constante_logica:
     TOK_TRUE { 
         $$.tipo = BOOLEAN;
         $$.es_direccion = FALSE;
+        escribir_operando(yyout, "1", false);
     } |
     TOK_FALSE { 
         $$.tipo = BOOLEAN;
         $$.es_direccion = FALSE;
+        escribir_operando(yyout, "0", false);
     }
 
 constante_entera:
     TOK_CONSTANTE_ENTERA {
         $$.tipo = INT;
         $$.es_direccion = FALSE;
+        sprintf(atributos_actuales.lexema, "%d", $1.valor_entero);
+        escribir_operando(yyout, atributos_actuales.lexema, false);
     };
 
 identificador:
@@ -647,14 +741,14 @@ identificador:
 
         if (local) {
             if (TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) {
-                fprintf(stderr, "ERROR: Identificador %s duplicado.\n", $1.lexema);
+                fprintf(stderr, "Error semántico [lin %d, col %d]: Identificador %s duplicado.\n", row, col, $1.lexema);
                 return PARAR_COMPILADOR;
             } else {
                 TablaSimbolos_declarar_local(tabla_simbolos, $1.lexema, &atributos_actuales);
             }
         } else {
             if (TablaSimbolos_existe_global(tabla_simbolos, $1.lexema)) {
-                fprintf(stderr, "ERROR: Identificador %s duplicado.\n", $1.lexema);
+                fprintf(stderr, "Error semántico [lin %d, col %d]: Identificador %s duplicado.\n", row, col, $1.lexema);
                 return PARAR_COMPILADOR;
             } else {
                 TablaSimbolos_declarar_global(tabla_simbolos, $1.lexema, &atributos_actuales);
@@ -666,7 +760,7 @@ idpf:
     TOK_IDENTIFICADOR {
         strcpy(atributos_actuales.lexema, $1.lexema);
         if (TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) {
-            fprintf(stderr, "ERROR: Identificador %s duplicado en la declaración de la función.\n", $1.lexema);
+            fprintf(stderr, "Error semántico [lin %d, col %d]: Identificador %s duplicado en la declaración de la función.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
         atributos_actuales.posicion = pos_parametro_actual;
@@ -681,26 +775,26 @@ int main(int argc, char **argv) {
     int status;
 
     if (argc != 3) {
-        fprintf(stderr, "Número incorrecto de argumentos.\n");
+        fprintf(stderr, "Error: Número incorrecto de argumentos.\n");
         return -1;
     }
 
     yyin = fopen(argv[1], "r");
     if (yyin == NULL) {
-        fprintf(stderr, "No se ha podido abrir el fichero %s.\n", argv[1]);
+        fprintf(stderr, "Error: No se ha podido abrir el fichero %s.\n", argv[1]);
         return -1;
     }
 
     yyout = fopen(argv[2], "w");
     if (yyout == NULL) {
-        fprintf(stderr, "No se ha podido abrir el fichero %s.\n", argv[2]);
+        fprintf(stderr, "Error: No se ha podido abrir el fichero %s.\n", argv[2]);
         fclose(yyin);
         return -1;
     }
 
     tabla_simbolos = TablaSimbolos_create();
     if (tabla_simbolos == NULL) {
-        fprintf(stderr, "No se ha podido crear la tabla de símbolos.\n");
+        fprintf(stderr, "Error: No se ha podido crear la tabla de símbolos.\n");
         fclose(yyin);
         fclose(yyout);
         return -1;
@@ -719,7 +813,7 @@ int main(int argc, char **argv) {
 
 int yyerror(char *s) {
     if (codigo_tok != TOK_ERROR) {
-        fprintf(stderr, "Error sintactico en [lin %d, col %d]\n", row, col-yyleng);
+        fprintf(stderr, "Error sintáctico [lin %d, col %d]\n", row, col-yyleng);
     }
     return 0;
 }

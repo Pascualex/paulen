@@ -143,6 +143,32 @@ tipo_atributos *HashTable_get(HashTable *hash_table, char key[MAX_LONGITUD_ID+1]
     }
 }
 
+tipo_atributos **HashTable_get_elements(HashTable *hash_table) {
+    tipo_atributos **elements;
+    Entry *current_entry;
+    int index, i;
+
+    elements = (tipo_atributos **) malloc(sizeof(tipo_atributos *)*hash_table->n_entries);
+    if (elements == NULL) return NULL;
+
+    index = 0;
+    for (i = 0; i < hash_table->size; i++) {
+        current_entry = hash_table->entries[i];
+        while (current_entry != NULL) {
+            elements[index] = current_entry->value;
+            index++;
+            current_entry = current_entry->next;
+        }
+    }
+
+    return elements;
+}
+
+int HashTable_size(HashTable *hash_table) {
+    if (hash_table == NULL) return 0;
+    return hash_table->n_entries;
+}
+
 void HashTable_resize(HashTable *hash_table) {
     Entry **new_entries, **old_entries, *current_entry;
     int old_size, i;
@@ -193,12 +219,13 @@ Entry *Entry_create(char key[MAX_LONGITUD_ID+1], tipo_atributos *value) {
     strcpy(entry->key, key);
     
     strcpy(entry->value->lexema, value->lexema);
-    entry->value->categoria = value->categoria;
     entry->value->clase = value->clase;
     entry->value->tipo = value->tipo;
     entry->value->numero_elementos = value->numero_elementos;
     entry->value->posicion = value->posicion;
     entry->value->valor_entero = value->valor_entero;
+    entry->value->num_parametros = value->num_parametros;
+    entry->value->num_variables_locales = value->num_variables_locales;
     entry->value->es_direccion = value->es_direccion;
     entry->value->etiqueta = value->etiqueta;
     

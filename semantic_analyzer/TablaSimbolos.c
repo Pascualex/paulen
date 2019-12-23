@@ -49,6 +49,16 @@ bool TablaSimbolos_existe_global(TablaSimbolos *tabla_simbolos, char id[MAX_LONG
     return HashTable_contains_key(tabla_simbolos->contexto_global, id);
 }
 
+tipo_atributos **TablaSimbolos_get_elementos_global(TablaSimbolos *tabla_simbolos) {
+    if (tabla_simbolos == NULL) return NULL;
+    return HashTable_get_elements(tabla_simbolos->contexto_global);
+}
+
+int TablaSimbolos_tam_global(TablaSimbolos *tabla_simbolos) {
+    if (tabla_simbolos == NULL) return 0;
+    return HashTable_size(tabla_simbolos->contexto_global);
+}
+
 int TablaSimbolos_declarar_local(TablaSimbolos *tabla_simbolos, char id[MAX_LONGITUD_ID+1], tipo_atributos *value) {
     if (tabla_simbolos == NULL) return ERROR;
     if (tabla_simbolos->contexto_local == NULL) return ERROR;

@@ -7,4 +7,4 @@ flex alfa.l
 bison -d -y -v alfa.y 
 
 #Compile all the code.
-gcc -Wall -o alfa lex.yy.c y.tab.c y.tab.h
+gcc -Wall -o alfa lex.yy.c y.tab.c y.tab.h generacion.c generacion.h TablaSimbolos.c TablaSimbolos.h HashTable.c HashTable.h

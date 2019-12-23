@@ -11,5 +11,7 @@ void HashTable_free(HashTable *hash_table);
 void HashTable_put(HashTable *hash_table, char key[MAX_LONGITUD_ID+1], tipo_atributos *value);
 bool HashTable_contains_key(HashTable *hash_table, char key[MAX_LONGITUD_ID+1]);
 tipo_atributos *HashTable_get(HashTable *hash_table, char key[MAX_LONGITUD_ID+1]);
+tipo_atributos **HashTable_get_elements(HashTable *hash_table);
+int HashTable_size(HashTable *hash_table);
 
 #endif

@@ -18,7 +18,6 @@ main {
 
   a = true;
   b = false;
-  
   printf a && b; // false
   printf a || b; // true
   printf !a; // false
