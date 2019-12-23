@@ -1,0 +1,1 @@
+Error semantico [lin 4, col 14]: Identificador x duplicado.

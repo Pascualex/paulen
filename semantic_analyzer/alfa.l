@@ -31,7 +31,7 @@ LETRA [a-zA-Z]
 "printf" { return print_and_update(TOK_PRINTF); }
 "return" { return print_and_update(TOK_RETURN); }
 
-    /* Símbolos */
+    /* Simbolos */
 ";" { return print_and_update(TOK_PUNTOYCOMA); }
 "," { return print_and_update(TOK_COMA); }
 "(" { return print_and_update(TOK_PARENTESISIZQUIERDO); }
@@ -66,7 +66,7 @@ LETRA [a-zA-Z]
     /* Identificadores */
 {LETRA}({LETRA}|{DIGITO})* {
     if (yyleng > MAX_LONGITUD_ID) {
-        fprintf(stderr, "Error morfológico [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
+        printf("Error morfologico [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
         codigo_tok = TOK_ERROR;
         return TOK_ERROR;
     } else {
@@ -85,7 +85,7 @@ LETRA [a-zA-Z]
 
     /* Errores */
 . {
-    fprintf(stderr, "Error morfológico [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);
+    printf("Error morfologico [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);
     codigo_tok = TOK_ERROR;
     return TOK_ERROR;
 }

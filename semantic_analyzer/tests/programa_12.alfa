@@ -1,0 +1,12 @@
+// Test error función dentro de función
+
+main {
+  int x;
+
+  function int doble(int num) {
+    return 2 * num;
+  }
+
+  x = 1;
+  x = doble(doble(x));
+}

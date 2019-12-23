@@ -1,0 +1,12 @@
+// Test error sin return
+
+main {
+  int x;
+
+  function int sinRetorno(int num) {
+    num = 2;
+  }
+
+  x = 1;
+  x = sinRetorno(x);
+}

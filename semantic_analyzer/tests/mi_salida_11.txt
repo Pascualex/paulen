@@ -1,0 +1,1 @@
+Error semantico [lin 8, col 9]: Se intenta asignar a y, de tipo booleano, una expresion de tipo entero.

@@ -1,0 +1,9 @@
+// Test error incompatibilidad de tipos
+
+main {
+  int x;
+  boolean y;
+
+  x = 1;
+  y = x;
+}

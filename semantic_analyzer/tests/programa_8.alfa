@@ -6,5 +6,5 @@ main {
   x = 1;
   y = 0;
 
-  printf x / y;
+  x = x / y;
 }

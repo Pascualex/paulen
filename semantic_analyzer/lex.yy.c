@@ -855,7 +855,7 @@ YY_RULE_SETUP
 #line 33 "alfa.l"
 { return print_and_update(TOK_RETURN); }
 	YY_BREAK
-/* Símbolos */
+/* Simbolos */
 case 12:
 YY_RULE_SETUP
 #line 36 "alfa.l"
@@ -991,7 +991,7 @@ YY_RULE_SETUP
 #line 68 "alfa.l"
 {
     if (yyleng > MAX_LONGITUD_ID) {
-        fprintf(stderr, "Error morfológico [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
+        printf("Error morfologico [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
         codigo_tok = TOK_ERROR;
         return TOK_ERROR;
     } else {
@@ -1028,7 +1028,7 @@ case 42:
 YY_RULE_SETUP
 #line 88 "alfa.l"
 {
-    fprintf(stderr, "Error morfológico [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);
+    printf("Error morfologico [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);
     codigo_tok = TOK_ERROR;
     return TOK_ERROR;
 }

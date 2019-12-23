@@ -1,0 +1,1 @@
+Error semantico [lin 6, col 9]: El identificador y no ha sido declarado.
