@@ -1,0 +1,52 @@
+// Test funciones y recursividad
+
+main {
+  int x, y;
+  
+  function int doble(int num) {
+    return 2 * num;
+  }
+
+  function int sumaTresParametros(int x; int y; int z) {
+    return x + y + z;
+  }
+
+  function int comprobarContextoLocal(int num) {
+    int x;
+    x = num;
+    printf x; // 3 (contexto local)
+    return x;
+  }
+
+  function int dobleMasDos(int num) {
+    return doble(num) + 2;
+  }
+
+  function int factorial(int num) {
+    if ((num <= 1)) { return 1; }
+    return num * factorial(num - 1);
+  }
+
+  x = 2;
+  x = doble(x);
+  printf x; // 4
+
+  x = 2;
+  y = 3;
+  x = sumaTresParametros(x, y, 5);
+  printf x; // 10
+
+  x = 2;
+  y = 3;
+  y = comprobarContextoLocal(y);
+  printf y; // 3
+  printf x; // 2 (contexto global)
+
+  x = 3;
+  x = dobleMasDos(x);
+  printf x; // 8
+
+  x = 5;
+  x = factorial(x);
+  printf x; // 120
+}

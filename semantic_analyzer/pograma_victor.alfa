@@ -1,27 +1,28 @@
-// Test operaciones aritméticas y lógicas
+// Test funciones y recursividad
 
 main {
   int x, y;
-  boolean a, b;
+  
+  function int doble(int num) {
+    printf num;
+    return 2 * num;
+  }
 
-  x = 4;
-  y = 2;
+  function int comprobarContextoLocal(int num) {
+    int x;
+    x = num;
+    printf x; // 3 (contexto local)
+    num = doble(num);
+    printf num;
+    return x;
+  }
 
-  printf x + y; // 6
-  printf x - y; // 2
-  printf x / y; // 2
-  printf x * y; // 8
-  printf -x; // -4
+  x = 2;
+  x = doble(x);
+  printf x; // 4
 
-  printf x * y - x / y; // 6
-  printf x * (y - x) / y; // -4
-
-  a = true;
-  b = false;
-  printf a && b; // false
-  printf a || b; // true
-  printf !a; // false
-
-  printf a || b && !a; // false
-  printf a || (b && !a); // true
+  y = 3;
+  y = comprobarContextoLocal(y);
+  printf y; // 3
+  printf x; // 4 (contexto global)
 }

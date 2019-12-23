@@ -460,11 +460,11 @@ void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros) 
     fprintf(file, "push dword eax\n");
 }
 
-void escribirVariableLocal(FILE *file, int posicion_variable_local) {
+void escribirVariableLocal(FILE *file, int pos_variable_local) {
     if (file == NULL) return;
 
     fprintf(file, "mov dword eax, ebp\n");
-    fprintf(file, "sub eax, %d\n", posicion_variable_local*4);
+    fprintf(file, "sub eax, %d\n", pos_variable_local*4);
     fprintf(file, "push dword eax\n");
 }
 

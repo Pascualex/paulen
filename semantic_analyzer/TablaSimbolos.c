@@ -88,6 +88,11 @@ bool TablaSimbolos_existe_local(TablaSimbolos *tabla_simbolos, char id[MAX_LONGI
     }
 }
 
+bool TablaSimbolos_existe_local_estricto(TablaSimbolos *tabla_simbolos, char id[MAX_LONGITUD_ID+1]) {
+    if (tabla_simbolos == NULL) return false;
+    return HashTable_contains_key(tabla_simbolos->contexto_local, id);
+}
+
 int TablaSimbolos_declarar_funcion(TablaSimbolos *tabla_simbolos, char id[MAX_LONGITUD_ID+1], tipo_atributos *value) {
     if (tabla_simbolos == NULL) return ERROR;
     if (tabla_simbolos->contexto_local != NULL) return ERROR;

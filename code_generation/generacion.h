@@ -55,7 +55,7 @@ void escribir_elemento_vector(FILE *file, char *nombre_vector, int tam_max, int 
 
 void declararFuncion(FILE *file, char *nombre_funcion, int num_var_loc);
 void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros);
-void escribirVariableLocal(FILE *file, int posicion_variable_local);
+void escribirVariableLocal(FILE *file, int pos_variable_local);
 void asignarDestinoEnPila(FILE *file, int es_variable);
 void retornarFuncion(FILE *file, int es_variable);
 void operandoEnPilaAArgumento(FILE *file, int es_variable);

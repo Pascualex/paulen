@@ -1,0 +1,34 @@
+// Test comparaciones
+
+main {
+  int a, b, c, d;
+
+  a = 0;
+  b = -1;
+  c = 0;
+  d = 1;
+
+  printf (a == b); // false
+  printf (a == c); // true
+  printf (a == d); // false
+
+  printf (a != b); // true
+  printf (a != c); // false
+  printf (a != d); // true
+
+  printf (a <= b); // false
+  printf (a <= c); // true
+  printf (a <= d); // true
+
+  printf (a >= b); // true
+  printf (a >= c); // true
+  printf (a >= d); // false
+
+  printf (a < b); // false
+  printf (a < c); // false
+  printf (a < d); // true
+
+  printf (a > b); // true
+  printf (a > c); // false
+  printf (a > d); // false
+}

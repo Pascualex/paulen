@@ -35,7 +35,7 @@ void escribir_registro_en_pila(FILE *file, char *reg, int es_variable, int offse
 
 void escribir_cabecera_bss(FILE *file, TablaSimbolos *tabla_simbolos) {
     tipo_atributos **variables;
-    int n_variables, numero_elementos, i;
+    int n_variables, numero_elementos, categoria, clase, i;
     char lexema[MAX_LONGITUD_ID];
 
     if (file == NULL) return;
@@ -49,9 +49,13 @@ void escribir_cabecera_bss(FILE *file, TablaSimbolos *tabla_simbolos) {
     n_variables = TablaSimbolos_tam_global(tabla_simbolos);
 
     for (i = 0; i < n_variables; i++) {
+        categoria = variables[i]->categoria;
+        if (categoria != VARIABLE) continue;
+
         strcpy(lexema, variables[i]->lexema);
+        clase = variables[i]->clase;
         numero_elementos = variables[i]->numero_elementos;
-        if (numero_elementos == 0) fprintf(file, "_%s resd 1\n", lexema);
+        if (clase == ESCALAR) fprintf(file, "_%s resd 1\n", lexema);
         else fprintf(file, "_%s resd %d\n", lexema, numero_elementos);
     }
 
@@ -69,9 +73,9 @@ void escribir_subseccion_data(FILE *file) {
 void declarar_variable(FILE *file, char *nombre, int tipo, int tamano) {
     if (file == NULL || nombre == NULL) return;
 
-    if (tipo == INT) {
+    if (tipo == ENTERO) {
         fprintf(file, "_%s resd %d\n", nombre, tamano);
-    } else if (tipo == BOOLEAN) {
+    } else if (tipo == BOOLEANO) {
         fprintf(file, "_%s resd %d\n", nombre, tamano);
     }
 }
@@ -323,9 +327,9 @@ void leer(FILE *file, char *nombre, int tipo) {
 
     fprintf(file, "push dword _%s\n", nombre);
 
-    if (tipo == INT) {
+    if (tipo == ENTERO) {
         fprintf(file, "call scan_int\n");
-    } else if (tipo == BOOLEAN) {
+    } else if (tipo == BOOLEANO) {
         fprintf(file, "call scan_boolean\n");
     } else {
         return;
@@ -343,9 +347,9 @@ void escribir(FILE *file, int es_variable, int tipo) {
         fprintf(file, "push dword eax\n");
     }
 
-    if (tipo == INT) {
+    if (tipo == ENTERO) {
         fprintf(file, "call print_int\n");
-    } else if (tipo == BOOLEAN) {
+    } else if (tipo == BOOLEANO) {
         fprintf(file, "call print_boolean\n");
     } else {
         return;
@@ -360,7 +364,7 @@ void ifthen_inicio(FILE *file, int exp_es_variable, int etiqueta) {
 
     cargar_registro(file, "eax", exp_es_variable);
 
-    fprintf(file, "cmp eax, %d", FALSE);
+    fprintf(file, "cmp eax, %d\n", FALSE);
     fprintf(file, "je ifthen_fin_%d\n", etiqueta);
 }
 
@@ -473,11 +477,11 @@ void escribirParametro(FILE *file, int pos_parametro, int num_total_parametros) 
     fprintf(file, "push dword eax\n");
 }
 
-void escribirVariableLocal(FILE *file, int posicion_variable_local) {
+void escribirVariableLocal(FILE *file, int pos_variable_local) {
     if (file == NULL) return;
 
     fprintf(file, "mov dword eax, ebp\n");
-    fprintf(file, "sub eax, %d\n", posicion_variable_local*4);
+    fprintf(file, "sub eax, %d\n", pos_variable_local*4);
     fprintf(file, "push dword eax\n");
 }
 

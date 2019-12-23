@@ -219,12 +219,14 @@ Entry *Entry_create(char key[MAX_LONGITUD_ID+1], tipo_atributos *value) {
     strcpy(entry->key, key);
     
     strcpy(entry->value->lexema, value->lexema);
+    entry->value->categoria = value->categoria;
     entry->value->clase = value->clase;
     entry->value->tipo = value->tipo;
     entry->value->numero_elementos = value->numero_elementos;
-    entry->value->posicion = value->posicion;
     entry->value->valor_entero = value->valor_entero;
+    entry->value->pos_parametro = value->pos_parametro;
     entry->value->num_parametros = value->num_parametros;
+    entry->value->pos_variable_local = value->pos_variable_local;
     entry->value->num_variables_locales = value->num_variables_locales;
     entry->value->es_direccion = value->es_direccion;
     entry->value->etiqueta = value->etiqueta;

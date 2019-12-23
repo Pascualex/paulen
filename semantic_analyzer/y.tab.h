@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 41 "alfa.y" /* yacc.c:1909  */
+#line 42 "alfa.y" /* yacc.c:1909  */
 
     #include "alfa.h"
 
@@ -136,7 +136,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 45 "alfa.y" /* yacc.c:1909  */
+#line 46 "alfa.y" /* yacc.c:1909  */
 
     tipo_atributos atributos;
 

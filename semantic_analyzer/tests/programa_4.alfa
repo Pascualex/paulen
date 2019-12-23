@@ -1,0 +1,20 @@
+// Test vectores
+
+main {
+  array int[4] values;
+
+  values[0] = 1;
+  values[1] = 2;
+  values[2] = 3;
+  values[3] = 4;
+
+  printf values[3]; // 4
+  printf values[2]; // 3
+  printf values[1]; // 2
+  printf values[0]; // 1
+
+  values[0] = values[3] + values[2] - values[1];
+  printf values[0]; // 5
+
+  printf (values[0] > values[3]); // true
+}

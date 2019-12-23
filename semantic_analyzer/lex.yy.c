@@ -2049,6 +2049,6 @@ void yyfree (void * ptr )
 int print_and_update(int codigo_tok_actual) {
     codigo_tok = codigo_tok_actual;
     col += yyleng;
-    //fprintf(yyout, ";D:\t%s\n", yytext);
+    //fprintf(yyout, ";D:\t%s %d\n", yytext, codigo_tok_actual);
     return codigo_tok;
 }
