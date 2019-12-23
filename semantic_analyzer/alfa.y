@@ -107,6 +107,8 @@
 %type <atributos> if_exp
 %type <atributos> if_else_then_exp
 %type <atributos> if_else_then_else_exp
+%type <atributos> while_exp
+%type <atributos> while_tok
 
 /* Precedencia de operadores */
 %left TOK_OR TOK_AND TOK_NOT
@@ -347,16 +349,28 @@ if_else_then_exp:
         etiqueta++;
     };
 
+bucle:
+    while_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
+        while_fin(yyout, $1.etiqueta);
+    };
+
 while_exp:
-    TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {
+    while_tok TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {
         if ($3.tipo == INT) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un WHILE, debería ser una expresión booleana.\n", row, col);
             return PARAR_COMPILADOR;
         }
+
+        while_exp_pila(yyout, $3.es_direccion, $1.etiqueta);
+        $$.etiqueta = $1.etiqueta;
     };
 
-bucle:
-    while_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA { };
+while_tok:
+    TOK_WHILE {
+        while_inicio(yyout, etiqueta);
+        $$.etiqueta = etiqueta;
+        etiqueta++;
+    };
 
 lectura:
     TOK_SCANF TOK_IDENTIFICADOR {
@@ -723,7 +737,7 @@ constante_logica:
         $$.tipo = BOOLEAN;
         $$.es_direccion = FALSE;
         escribir_operando(yyout, "0", false);
-    }
+    };
 
 constante_entera:
     TOK_CONSTANTE_ENTERA {

@@ -45,7 +45,7 @@ void ifthenelse_fin_then(FILE *file, int etiqueta);
 void ifthenelse_fin(FILE *file, int etiqueta);
 
 void while_inicio(FILE *file, int etiqueta);
-void while_exp_pila (FILE *file, int exp_es_variable, int etiqueta);
+void while_exp_pila(FILE *file, int exp_es_variable, int etiqueta);
 void while_fin(FILE *file, int etiqueta);
 
 void escribir_codigo_for(FILE *file, int es_variable_1, int es_variable_2, int es_variable_3, char *bloque_codigo, int etiqueta);
