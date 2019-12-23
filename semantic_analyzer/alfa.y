@@ -105,8 +105,7 @@
 %type <atributos> idf_llamada_funcion
 %type <atributos> elemento_vector
 %type <atributos> if_exp
-%type <atributos> if_else_then_exp
-%type <atributos> if_else_then_else_exp
+%type <atributos> if_else
 %type <atributos> while_exp
 %type <atributos> while_tok
 
@@ -315,12 +314,12 @@ condicional:
     if_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
         ifthen_fin(yyout, $1.etiqueta);
     } |
-    if_else_then_else_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
-        ifthenelse_fin(yyout, $1.etiqueta);
+    if_else TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
+        ifthen_fin(yyout, $1.etiqueta);
     };
 
 if_exp:
-    TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {
+    TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEDERECHA sentencias TOK_LLAVEIZQUIERDA {
         if ($3.tipo == INT) {
             fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un IF, debería ser una expresión booleana.\n", row, col);
             return PARAR_COMPILADOR;
@@ -331,22 +330,10 @@ if_exp:
         etiqueta++;
     };
 
-if_else_then_else_exp:
-    if_else_then_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE {
+if_else:
+    if_exp TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE {
         ifthenelse_fin_then(yyout, $1.etiqueta);
         $$.etiqueta = $1.etiqueta;
-    };
-
-if_else_then_exp:
-    TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {
-        if ($3.tipo == INT) {
-            fprintf(stderr, "Error semántico [lin %d, col %d]: Se está usando una expresión entera como condicional en un IF-ELSE, debería ser una expresión booleana.\n", row, col);
-            return PARAR_COMPILADOR;
-        }
-
-        ifthenelse_inicio(yyout, $3.es_direccion, etiqueta);
-        $$.etiqueta = etiqueta;
-        etiqueta++;
     };
 
 bucle:

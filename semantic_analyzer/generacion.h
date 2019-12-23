@@ -40,9 +40,7 @@ void escribir(FILE *file, int es_variable, int tipo);
 void ifthen_inicio(FILE *file, int exp_es_variable, int etiqueta);
 void ifthen_fin(FILE *file, int etiqueta);
 
-void ifthenelse_inicio(FILE *file, int exp_es_variable, int etiqueta);
 void ifthenelse_fin_then(FILE *file, int etiqueta);
-void ifthenelse_fin(FILE *file, int etiqueta);
 
 void while_inicio(FILE *file, int etiqueta);
 void while_exp_pila(FILE *file, int exp_es_variable, int etiqueta);

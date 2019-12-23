@@ -370,26 +370,11 @@ void ifthen_fin(FILE *file, int etiqueta) {
     fprintf(file, "ifthen_fin_%d:\n", etiqueta);
 }
 
-void ifthenelse_inicio(FILE *file, int exp_es_variable, int etiqueta) {
-    if (file == NULL) return;
-
-    cargar_registro(file, "eax", exp_es_variable);
-
-    fprintf(file, "cmp eax, %d\n", FALSE);
-    fprintf(file, "je ifthenelse_fin_then_%d\n", etiqueta);
-}
-
 void ifthenelse_fin_then(FILE *file, int etiqueta) {
     if (file == NULL) return;
 
     fprintf(file, "jmp ifthenelse_fin_%d\n", etiqueta);
-    fprintf(file, "ifthenelse_fin_then_%d:\n", etiqueta);
-}
-
-void ifthenelse_fin(FILE *file, int etiqueta) {
-    if (file == NULL) return;
-
-    fprintf(file, "ifthenelse_fin_%d:\n", etiqueta);
+    fprintf(file, "ifthen_fin_%d:\n", etiqueta);
 }
 
 void while_inicio(FILE *file, int etiqueta) {
