@@ -1,0 +1,22 @@
+// Test vectores
+
+main {
+  int x, y;
+  boolean a, b;
+
+  scanf x;
+  scanf y;
+  printf (x*y);
+
+  scanf x;
+  scanf y;
+  printf (x-y);
+
+  scanf a;
+  scanf b;
+  printf (a && b);
+
+  scanf a;
+  scanf b;
+  printf (a || b);
+}

@@ -1,0 +1,45 @@
+// Test vectores
+
+main {
+  int x, y, z;
+
+  y = 0;
+  x = 0;
+  while ((x < 6)) {
+    y = y+x;
+    x = x+1;
+  }
+
+  printf y;
+
+  x = 0;
+  while ((y != x)) {
+    y = y-1;
+  }
+
+  printf y;
+
+  x = 1;
+  y = 0;
+  while ((x <= 5)) {
+    z = 1;
+    while ((z <= 5)) {
+      y = y-3;
+      z = z+1;
+    }
+    x = x+1;
+  }
+
+  printf y;
+
+  x = 0;
+  y = 0;
+  z = 10;
+  while ((x+y < z)) {
+    y = y + 2;
+    x = x + 2;
+    z = z + 1;
+  }
+
+  printf z;
+}
