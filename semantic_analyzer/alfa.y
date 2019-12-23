@@ -173,8 +173,8 @@ clase_vector:
     };
 
 identificadores:
-    identificador { } |
-    identificador TOK_COMA identificadores { };
+    identificador |
+    identificador TOK_COMA identificadores;
 
 funciones:
     funcion funciones |
@@ -412,6 +412,8 @@ retorno_funcion:
             FALTA COMPROBAR:
                 En el cuerpo de una función obligatoriamente tiene que aparecer al menos una sentencia de retorno. (?)
         */
+
+        retornarFuncion(yyout, $2.es_direccion);
     };
 
 exp:
@@ -546,6 +548,7 @@ exp:
         $$.es_direccion = TRUE;
 
         escribir_operando(yyout, $1.lexema, TRUE);
+        if (en_explist) operandoEnPilaAArgumento(yyout, TRUE);
     } |
     constante { 
         $$.tipo = $1.tipo;
@@ -562,6 +565,7 @@ exp:
     elemento_vector { 
         $$.tipo = $1.tipo;
         $$.es_direccion = $1.es_direccion; 
+        if (en_explist) operandoEnPilaAArgumento(yyout, TRUE);
     } |
     idf_llamada_funcion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {
         if ((local && !TablaSimbolos_existe_local(tabla_simbolos, $1.lexema)) || (!local && !TablaSimbolos_existe_global(tabla_simbolos, $1.lexema))) {
@@ -576,10 +580,16 @@ exp:
             fprintf(stderr, "Error semántico [lin %d, col %d]: El identificador %s corresponde a un vector, por lo que no es invocable.\n", row, col, $1.lexema);
             return PARAR_COMPILADOR;
         }
-        /* GENERACIÓN DE CÓDIGO LLAMADA A FUNCIÓN (?) */
         en_explist = FALSE;
         $$.es_direccion = FALSE;
         $$.tipo = atributos_actuales.tipo;
+
+        if (num_parametros_actual != atributos_actuales.num_parametros) {
+            fprintf(stderr, "Error semántico [lin %d, col %d]: En la llamada a la función %s se esperaban %d argumentos, pero se obtuvieron %d.\n", row, col, $1.lexema, atributos_actuales.num_parametros, num_parametros_actual);
+            return PARAR_COMPILADOR;
+        }
+
+        llamarFuncion(yyout, $1.lexema, num_parametros_actual);
     };
 
 idf_llamada_funcion:
