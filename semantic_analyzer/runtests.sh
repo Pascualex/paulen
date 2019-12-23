@@ -1,4 +1,4 @@
-num_tests=8
+num_tests=9
 echo Compilando el compilador...
 sh compile.sh
 echo Ejecutando tests:

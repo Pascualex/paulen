@@ -1,0 +1,28 @@
+// Test programa multiplicacion vectores
+
+main {
+  array int[10] v1;
+  array int[10] v2;
+  int total, i;
+
+  function int multiplicar(int a; int b) {
+    return a*b;
+  }
+
+  i = 0;
+  while ((i < 10)) {
+    v1[i] = i;
+    v2[i] = multiplicar(i, 2);
+    i = i+1;
+  }
+
+  total = 0;
+  i = 0;
+
+  while ((i < 10)) {
+    total = total + multiplicar(v1[i], v2[i]);
+    i = i+1;
+  }
+
+  printf total; // 570
+}
